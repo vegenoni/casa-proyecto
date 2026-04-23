@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Proyecto · Ve + Juanma</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f4; color: #1a1a1a; min-height: 100vh; }
+  .app { max-width: 720px; margin: 0 auto; padding: 2rem 1rem; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid #e5e5e5; margin-bottom: 1.5rem; flex-wrap: wrap; background: #f8f7f4; position: sticky; top: 0; z-index: 10; padding-top: 0.5rem; }
+  .tab { padding: 8px 14px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; color: #888; background: none; border-top: none; border-left: none; border-right: none; white-space: nowrap; font-family: inherit; }
+  .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; font-weight: 500; }
+  .tab:hover:not(.active) { color: #1a1a1a; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 12px; }
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%; font-size: 14px; padding: 8px 10px;
+    border: 1px solid #ddd; border-radius: 8px;
+    background: #fafafa; color: #1a1a1a;
+    font-family: inherit; resize: vertical;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: #1a1a1a; background: #fff; }
+  button.btn {
+    padding: 8px 16px; font-size: 13px; cursor: pointer;
+    border-radius: 8px; border: 1px solid #ddd;
+    background: #fff; color: #1a1a1a; font-family: inherit;
+  }
+  button.btn:hover { background: #f5f5f5; }
+  button.btn:active { transform: scale(0.98); }
+  button.btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  button.btn-primary:hover { background: #333; }
+  .form-row { margin-bottom: 12px; }
+  .form-label { font-size: 12px; color: #888; margin-bottom: 4px; display: block; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .metric { background: #f5f5f3; border-radius: 8px; padding: 1rem; }
+  .metric-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+  .metric-value { font-size: 22px; font-weight: 500; }
+  .section-title { font-size: 15px; font-weight: 500; margin-bottom: 1rem; }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; }
+  .del-btn { font-size: 11px; color: #bbb; cursor: pointer; background: none; border: none; font-family: inherit; }
+  .del-btn:hover { color: #c0392b; }
+  .checklist-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid #f0f0f0; }
+  .checklist-item:last-child { border-bottom: none; }
+  .checklist-item input[type="checkbox"] { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; cursor: pointer; accent-color: #1a1a1a; }
+  .checklist-item label { font-size: 13px; cursor: pointer; line-height: 1.5; }
+  .checklist-item input:checked + label { color: #bbb; text-decoration: line-through; }
+  .progress-wrap { background: #eee; border-radius: 99px; height: 5px; margin-top: 6px; }
+  .progress-bar { height: 5px; border-radius: 99px; background: #1a1a1a; transition: width 0.3s; }
+  .phase-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .phase-name { font-size: 13px; flex: 1; }
+  .phase-pct { font-size: 12px; color: #888; min-width: 32px; text-align: right; }
+  .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 99px; display: inline-block; }
+  .s-interesante { background: #e1f5ee; color: #0a6640; }
+  .s-descartado { background: #fce8e8; color: #a32d2d; }
+  .s-pendiente { background: #fef3e2; color: #7a4a00; }
+  .s-potencial { background: #eeecfe; color: #3c3489; }
+  .s-elegida { background: #e6f4ea; color: #1e6b3c; }
+  .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .rating-label { font-size: 13px; width: 160px; flex-shrink: 0; color: #555; }
+  .rating-btns { display: flex; gap: 4px; }
+  .rating-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; cursor: pointer; font-size: 12px; color: #888; font-family: inherit; }
+  .rating-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  .zona-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .zona-card.elegida { border: 2px solid #1d9e75; }
+  .criterios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 10px 0; }
+  .criterio-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+  .criterio-label { color: #888; }
+  .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; font-size: 12px; }
+  .pro::before { content: "+ "; color: #1d9e75; font-weight: 500; }
+  .con::before { content: "- "; color: #c0392b; font-weight: 500; }
+  .pro, .con { color: #666; margin-bottom: 3px; }
+  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1a1a1a; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 13px; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  .loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
+  .setup-banner { background: #fff8e6; border: 1px solid #fcd34d; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 13px; color: #7a4a00; }
+  .setup-banner input { margin-top: 8px; background: #fff; }
+  .setup-banner button { margin-top: 8px; }
+  @media (max-width: 500px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .criterios-grid { grid-template-columns: 1fr; }
+    .pros-cons { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Nuestra casa</h1>
+  <p class="subtitle">Ve + Juanma · Proyecto en curso</p>
+
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen',this)">Resumen</button>
+    <button class="tab" onclick="showTab('zonas',this)">Zonas</button>
+    <button class="tab" onclick="showTab('journal',this)">Journal</button>
+    <button class="tab" onclick="showTab('checklist',this)">Checklist</button>
+    <button class="tab" onclick="showTab('visitas',this)">Visitas</button>
+    <button class="tab" onclick="showTab('decisiones',this)">Decisiones</button>
+  </div>
+
+  <!-- RESUMEN -->
+  <div id="tab-resumen" class="panel active">
+    <div class="grid-2" style="margin-bottom:1.5rem;">
+      <div class="metric"><div class="metric-label">Zonas evaluadas</div><div class="metric-value" id="s-zonas">–</div></div>
+      <div class="metric"><div class="metric-label">Entradas en journal</div><div class="metric-value" id="s-entries">–</div></div>
+      <div class="metric"><div class="metric-label">Tareas completadas</div><div class="metric-value" id="s-tasks">–</div></div>
+      <div class="metric"><div class="metric-label">Decisiones tomadas</div><div class="metric-value" id="s-decisions">–</div></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="section-title">Progreso por etapa</div>
+      <div id="phase-progress"></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="section-title" style="margin-bottom:0.5rem;">Zona con mejor puntaje</div>
+      <div id="top-zona" style="font-size:13px;color:#888;">Cargando...</div>
+    </div>
+    <div class="card">
+      <div class="section-title" style="margin-bottom:0.5rem;">Última entrada del journal</div>
+      <div id="last-entry" style="font-size:13px;color:#888;">Cargando...</div>
+    </div>
+  </div>
+
+  <!-- ZONAS -->
+  <div id="tab-zonas" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Agregar zona candidata</div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;"><label class="form-label">Ciudad / pueblo</label><input type="text" id="z-nombre" placeholder="Ej: Tandil"></div>
+        <div class="form-row" style="margin-bottom:0;"><label class="form-label">Provincia</label><input type="text" id="z-prov" placeholder="Ej: Buenos Aires"></div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div class="form-label" style="margin-bottom:8px;">Evaluación por criterios (1 a 5)</div>
+        <div id="rating-form"></div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div><label class="form-label">Pros (uno por línea)</label><textarea id="z-pros" rows="3" placeholder="Naturaleza&#10;Clima fresco&#10;Ciudad con servicios"></textarea></div>
+        <div><label class="form-label">Contras (uno por línea)</label><textarea id="z-cons" rows="3" placeholder="Lejos de la familia&#10;Mercado laboral chico"></textarea></div>
+      </div>
+      <div class="form-row"><label class="form-label">Notas libres</label><textarea id="z-notas" rows="2" placeholder="Lo que quieran agregar..."></textarea></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="addZona()">Agregar zona</button>
+        <label style="font-size:13px;color:#555;display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="z-elegida" style="width:16px;height:16px;accent-color:#1a1a1a;"> Marcar como elegida
+        </label>
+      </div>
+    </div>
+    <div id="zonas-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- JOURNAL -->
+  <div id="tab-journal" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="form-row"><label class="form-label">Etiqueta</label>
+        <select id="j-tag">
+          <option value="general">General</option>
+          <option value="zona">Zona / exploración</option>
+          <option value="terreno">Terreno</option>
+          <option value="arquitecto">Arquitecto</option>
+          <option value="obra">Obra</option>
+          <option value="legal">Legal</option>
+          <option value="financiero">Financiero</option>
+          <option value="emocional">Emocional</option>
+          <option value="idea">Idea</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-label">Nota</label><textarea id="j-text" rows="4" placeholder="¿Qué pasó hoy? ¿Qué decidieron? ¿Qué están pensando?"></textarea></div>
+      <button class="btn btn-primary" onclick="addEntry()">Agregar entrada</button>
+    </div>
+    <div id="entries-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div id="tab-checklist" class="panel">
+    <div id="checklist-container"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- VISITAS -->
+  <div id="tab-visitas" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Registrar visita</div>
+      <div class="form-row"><label class="form-label">Lugar / terreno</label><input type="text" id="v-nombre" placeholder="Ej: Terreno calle Los Robles, Tandil"></div>
+      <div class="form-row"><label class="form-label">Fecha de visita</label><input type="date" id="v-fecha"></div>
+      <div class="form-row"><label class="form-label">Estado</label>
+        <select id="v-estado">
+          <option value="pendiente">Pendiente de visitar</option>
+          <option value="potencial">Potencial</option>
+          <option value="interesante">Muy interesante</option>
+          <option value="descartado">Descartado</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-label">Notas</label><textarea id="v-notas" rows="3" placeholder="Precio, m², servicios, suelo, pros/contras..."></textarea></div>
+      <button class="btn btn-primary" onclick="addVisit()">Guardar visita</button>
+    </div>
+    <div id="visits-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- DECISIONES -->
+  <div id="tab-decisiones" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Registrar decisión</div>
+      <div class="form-row"><label class="form-label">Decisión tomada</label><input type="text" id="d-texto" placeholder="Ej: Vamos a visitar Tandil el finde"></div>
+      <div class="form-row"><label class="form-label">Contexto o razón</label><textarea id="d-razon" rows="2" placeholder="¿Por qué tomaron esta decisión?"></textarea></div>
+      <button class="btn btn-primary" onclick="addDecision()">Guardar decisión</button>
+    </div>
+    <div id="decisions-list"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const CHECKLISTS = [
+  { phase:'Exploración de zonas', items:[
+    'Listar al menos 3 zonas candidatas en el comparador',
+    'Investigar cada zona online (foros, grupos, Facebook local)',
+    'Comparar puntajes y elegir 2 finalistas',
+    'Visitar la zona 1 un fin de semana completo',
+    'Visitar la zona 2 si la 1 no convence',
+    'Tomar la decisión final de zona',
+  ]},
+  { phase:'Terreno', items:[
+    'Definir tamaño mínimo (casa + taller + animales)',
+    'Verificar zonificación antes de comprar',
+    'Confirmar servicios: luz, agua, gas o alternativas',
+    'Contratar estudio de suelo antes de cerrar compra',
+    'Verificar escritura, sin deudas ni embargos',
+    'Consultar si se puede tener gallinas en esa zona',
+    'Consultar sobre actividad comercial desde domicilio',
+  ]},
+  { phase:'Equipo profesional', items:[
+    'Buscar arquitectos con experiencia en la zona',
+    'Hacer al menos 2-3 consultas antes de elegir',
+    'Definir el sistema constructivo',
+    'Contratar gestor o escribano para trámites',
+    'Consultar instaladores matriculados',
+  ]},
+  { phase:'Proyecto y diseño', items:[
+    'Definir el programa de la casa: cuartos, espacios',
+    'Planificar el taller desde el anteproyecto',
+    'Planificar espacio exterior: Sandy, animales, huerta',
+    'Obtener permiso de construcción municipal',
+    'Definir orientación de la casa (taller con luz norte)',
+  ]},
+  { phase:'Trabajo y economía', items:[
+    'Definir qué hace Juanma laboralmente en destino',
+    'Investigar el mercado laboral local de su rubro',
+    'Evaluar estructura legal del taller de Ve',
+    'Definir si el taller vende presencial, online o ambos',
+    'Abrir ahorro específico para el proyecto',
+    'Armar presupuesto estimado completo',
+  ]},
+  { phase:'Mudanza y logística', items:[
+    'Resolver dónde vivir durante la obra',
+    'Planificar traslado con un solo auto',
+    'Conseguir flete para muebles',
+    'Buscar veterinaria en destino para Sandy',
+    'Asegurar cerco perimetral desde el día uno',
+    'Transferir médicos, trámites y servicios',
+  ]},
+];
+const TAG_COLORS = {
+  general:{bg:'#f1efe8',color:'#5f5e5a'}, zona:{bg:'#eeedfe',color:'#3c3489'},
+  terreno:{bg:'#e1f5ee',color:'#0f6e56'}, arquitecto:{bg:'#eeedfe',color:'#534ab7'},
+  obra:{bg:'#faeeda',color:'#854f0b'}, legal:{bg:'#faece7',color:'#993c1d'},
+  financiero:{bg:'#e6f1fb',color:'#185fa5'}, emocional:{bg:'#fbeaf0',color:'#993556'},
+  idea:{bg:'#eaf3de',color:'#3b6d11'},
+};
+const CRITERIOS = [
+  {id:'clima',label:'Clima'},{id:'distancia',label:'Distancia a CABA'},
+  {id:'servicios',label:'Servicios'},{id:'costo',label:'Costo de vida'},
+  {id:'terrenos',label:'Terrenos'},{id:'comunidad',label:'Comunidad'},
+  {id:'taller',label:'Potencial taller'},
+];
+
+let scriptUrl = 'https://script.google.com/macros/s/AKfycbyRb7YVUxjDgnj_rXjh8CpBdhZoMbP8L7yfOIZZLKXnE7YSIqqnW164eID8usq5yt5w/exec';
+let appData = { journal:[], zonas:[], visitas:[], decisiones:[], checklist:[] };
+let ratings = {};
+CRITERIOS.forEach(c => ratings[c.id] = 0);
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+function saveScriptUrl() {
+  const val = document.getElementById('script-url-input').value.trim();
+  if (!val) return;
+  localStorage.setItem(SCRIPT_URL_KEY, val);
+  scriptUrl = val;
+  document.getElementById('setup-banner').style.display = 'none';
+  loadAll();
+  toast('Conectado correctamente');
+}
+
+async function api(params, body) {
+  if (!scriptUrl) return null;
+  try {
+    if (body) {
+      const res = await fetch(scriptUrl, { method:'POST', body: JSON.stringify(body) });
+      return await res.json();
+    } else {
+      const url = scriptUrl + '?' + new URLSearchParams(params);
+      const res = await fetch(url);
+      return await res.json();
+    }
+  } catch(e) {
+    toast('Error de conexión');
+    return null;
+  }
+}
+
+async function loadAll() {
+  const data = await api({ action:'readAll' });
+  if (!data) return;
+
+  appData.journal = data.journal || [];
+  appData.zonas = data.zonas || [];
+  appData.visitas = data.visitas || [];
+  appData.decisiones = data.decisiones || [];
+  appData.checklist = data.checklist || [];
+
+  renderAll();
+}
+
+function renderAll() {
+  renderEntries();
+  renderZonas();
+  renderVisits();
+  renderDecisions();
+  renderChecklist();
+  updateResumen();
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+function renderStars(val) {
+  return [1,2,3,4,5].map(n => `<span style="color:${n<=val?'#ef9f27':'#ddd'};font-size:13px;">★</span>`).join('');
+}
+
+function buildRatingBtns() {
+  const el = document.getElementById('rating-form');
+  if (!el) return;
+  el.innerHTML = CRITERIOS.map(c => `
+    <div class="rating-row">
+      <span class="rating-label">${c.label}</span>
+      <div class="rating-btns">
+        ${[1,2,3,4,5].map(n=>`<button class="rating-btn${ratings[c.id]===n?' active':''}" onclick="setRating('${c.id}',${n})">${n}</button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function setRating(id, val) { ratings[id] = val; buildRatingBtns(); }
+
+async function addZona() {
+  const nombre = document.getElementById('z-nombre').value.trim();
+  if (!nombre) return;
+  const score = Math.round(CRITERIOS.reduce((s,c)=>s+ratings[c.id],0) / CRITERIOS.length * 10) / 10;
+  const pros = document.getElementById('z-pros').value.trim().split('\n').filter(Boolean).join('|');
+  const cons = document.getElementById('z-cons').value.trim().split('\n').filter(Boolean).join('|');
+  const zona = {
+    id: uid(), nombre, provincia: document.getElementById('z-prov').value.trim(),
+    clima:ratings.clima, distancia:ratings.distancia, servicios:ratings.servicios,
+    costo:ratings.costo, terrenos:ratings.terrenos, comunidad:ratings.comunidad, taller:ratings.taller,
+    pros, contras:cons, notas:document.getElementById('z-notas').value.trim(),
+    elegida: document.getElementById('z-elegida').checked ? 'TRUE' : 'FALSE',
+    score
+  };
+  appData.zonas.push(zona);
+  renderZonas();
+  updateResumen();
+  await api(null, { action:'write', section:'zonas', data:zona });
+  toast('Zona guardada');
+  document.getElementById('z-nombre').value='';
+  document.getElementById('z-prov').value='';
+  document.getElementById('z-pros').value='';
+  document.getElementById('z-cons').value='';
+  document.getElementById('z-notas').value='';
+  document.getElementById('z-elegida').checked=false;
+  CRITERIOS.forEach(c=>ratings[c.id]=0);
+  buildRatingBtns();
+}
+
+async function deleteZona(id) {
+  appData.zonas = appData.zonas.filter(z=>z.id!==id);
+  renderZonas(); updateResumen();
+  await api(null, { action:'delete', section:'zonas', id });
+  toast('Zona eliminada');
+}
+
+async function toggleElegida(id) {
+  const z = appData.zonas.find(z=>z.id===id);
+  if (!z) return;
+  z.elegida = z.elegida==='TRUE' ? 'FALSE' : 'TRUE';
+  renderZonas();
+  await api(null, { action:'toggleElegida', id, elegida: z.elegida });
+  toast('Actualizado');
+}
+
+function renderZonas() {
+  const el = document.getElementById('zonas-list');
+  if (!appData.zonas.length) {
+    el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay zonas. Agregá la primera candidata arriba.</div>';
+    return;
+  }
+  const sorted = [...appData.zonas].sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0));
+  el.innerHTML = sorted.map(z => {
+    const elegida = z.elegida==='TRUE';
+    const pros = z.pros ? z.pros.split('|').filter(Boolean) : [];
+    const cons = z.contras ? z.contras.split('|').filter(Boolean) : [];
+    const score = parseFloat(z.score)||0;
+    return `<div class="zona-card${elegida?' elegida':''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <div>
+          <div style="font-size:15px;font-weight:500;">${z.nombre} ${elegida?'<span class="tag s-elegida">Elegida</span>':''}</div>
+          <div style="font-size:12px;color:#888;">${z.provincia||''}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:20px;font-weight:500;">${score.toFixed(1)}<span style="font-size:13px;color:#888">/5</span></div>
+          <div style="font-size:11px;color:#888;">puntaje</div>
+        </div>
+      </div>
+      <div class="criterios-grid">
+        ${CRITERIOS.map(c=>`<div class="criterio-item"><span class="criterio-label">${c.label}</span><span>${renderStars(parseInt(z[c.id])||0)}</span></div>`).join('')}
+      </div>
+      ${(pros.length||cons.length)?`<div class="pros-cons"><div>${pros.map(p=>`<div class="pro">${p}</div>`).join('')}</div><div>${cons.map(c=>`<div class="con">${c}</div>`).join('')}</div></div>`:''}
+      ${z.notas?`<div style="font-size:12px;color:#888;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;">${z.notas}</div>`:''}
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button class="btn" onclick="toggleElegida('${z.id}')" style="font-size:12px;padding:5px 12px;">${elegida?'Desmarcar como elegida':'Marcar como elegida'}</button>
+        <button class="del-btn" onclick="deleteZona('${z.id}')">eliminar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function addEntry() {
+  const text = document.getElementById('j-text').value.trim();
+  if (!text) return;
+  const entry = { id:uid(), fecha:new Date().toISOString(), etiqueta:document.getElementById('j-tag').value, texto:text };
+  appData.journal.unshift(entry);
+  renderEntries(); updateResumen();
+  await api(null, { action:'write', section:'journal', data:entry });
+  toast('Entrada guardada');
+  document.getElementById('j-text').value='';
+}
+
+async function deleteEntry(id) {
+  appData.journal = appData.journal.filter(e=>e.id!==id);
+  renderEntries(); updateResumen();
+  await api(null, { action:'delete', section:'journal', id });
+  toast('Entrada eliminada');
+}
+
+function renderEntries() {
+  const el = document.getElementById('entries-list');
+  if (!appData.journal.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay entradas.</div>'; return; }
+  el.innerHTML = appData.journal.map(e => {
+    const tc = TAG_COLORS[e.etiqueta]||TAG_COLORS.general;
+    const d = new Date(e.fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'});
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <span class="tag" style="background:${tc.bg};color:${tc.color}">${e.etiqueta}</span>
+        <button class="del-btn" onclick="deleteEntry('${e.id}')">eliminar</button>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:4px;">${d}</div>
+      <div style="font-size:14px;line-height:1.6;white-space:pre-wrap;">${e.texto}</div>
+    </div>`;
+  }).join('');
+}
+
+async function addVisit() {
+  const nombre = document.getElementById('v-nombre').value.trim();
+  if (!nombre) return;
+  const visit = { id:uid(), nombre, fecha:document.getElementById('v-fecha').value, estado:document.getElementById('v-estado').value, notas:document.getElementById('v-notas').value.trim() };
+  appData.visitas.unshift(visit);
+  renderVisits(); updateResumen();
+  await api(null, { action:'write', section:'visitas', data:visit });
+  toast('Visita guardada');
+  document.getElementById('v-nombre').value='';
+  document.getElementById('v-fecha').value='';
+  document.getElementById('v-notas').value='';
+}
+
+async function deleteVisit(id) {
+  appData.visitas = appData.visitas.filter(v=>v.id!==id);
+  renderVisits();
+  await api(null, { action:'delete', section:'visitas', id });
+  toast('Visita eliminada');
+}
+
+function renderVisits() {
+  const el = document.getElementById('visits-list');
+  const labels={interesante:'Muy interesante',descartado:'Descartado',pendiente:'Pendiente',potencial:'Potencial'};
+  if (!appData.visitas.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay visitas registradas.</div>'; return; }
+  el.innerHTML = appData.visitas.map(v=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:14px;font-weight:500;">${v.nombre}</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          ${v.fecha?`<span style="font-size:12px;color:#aaa;">${v.fecha}</span>`:''}
+          <button class="del-btn" onclick="deleteVisit('${v.id}')">eliminar</button>
+        </div>
+      </div>
+      ${v.notas?`<div style="font-size:13px;color:#666;margin-bottom:8px;line-height:1.5;">${v.notas}</div>`:''}
+      <span class="status-badge s-${v.estado}">${labels[v.estado]||v.estado}</span>
+    </div>`).join('');
+}
+
+async function addDecision() {
+  const texto = document.getElementById('d-texto').value.trim();
+  if (!texto) return;
+  const dec = { id:uid(), fecha:new Date().toISOString(), texto, razon:document.getElementById('d-razon').value.trim() };
+  appData.decisiones.unshift(dec);
+  renderDecisions(); updateResumen();
+  await api(null, { action:'write', section:'decisiones', data:dec });
+  toast('Decisión guardada');
+  document.getElementById('d-texto').value='';
+  document.getElementById('d-razon').value='';
+}
+
+async function deleteDecision(id) {
+  appData.decisiones = appData.decisiones.filter(d=>d.id!==id);
+  renderDecisions(); updateResumen();
+  await api(null, { action:'delete', section:'decisiones', id });
+  toast('Decisión eliminada');
+}
+
+function renderDecisions() {
+  const el = document.getElementById('decisions-list');
+  if (!appData.decisiones.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay decisiones registradas.</div>'; return; }
+  el.innerHTML = appData.decisiones.map(d=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <div style="font-size:14px;font-weight:500;">${d.texto}</div>
+        <button class="del-btn" onclick="deleteDecision('${d.id}')">eliminar</button>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:${d.razon?'6px':'0'}">${new Date(d.fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'})}</div>
+      ${d.razon?`<div style="font-size:13px;color:#666;">${d.razon}</div>`:''}
+    </div>`).join('');
+}
+
+async function toggleCheck(etapa_index, item_index) {
+  const existing = appData.checklist.find(c=>String(c.etapa_index)===String(etapa_index)&&String(c.item_index)===String(item_index));
+  const newVal = existing ? (existing.completado==='TRUE'?'FALSE':'TRUE') : 'TRUE';
+  if (existing) existing.completado = newVal;
+  else appData.checklist.push({etapa_index, item_index, completado: newVal});
+  renderChecklist(); updateResumen();
+  await api(null, { action:'toggleCheck', etapa_index, item_index, completado: newVal });
+}
+
+function getCheck(ei, ii) {
+  const r = appData.checklist.find(c=>String(c.etapa_index)===String(ei)&&String(c.item_index)===String(ii));
+  return r && r.completado==='TRUE';
+}
+
+function renderChecklist() {
+  const el = document.getElementById('checklist-container');
+  el.innerHTML = CHECKLISTS.map((section,si)=>{
+    const done = section.items.filter((_,ii)=>getCheck(si,ii)).length;
+    const items = section.items.map((item,ii)=>`
+      <div class="checklist-item">
+        <input type="checkbox" id="chk-${si}-${ii}" ${getCheck(si,ii)?'checked':''} onchange="toggleCheck(${si},${ii})">
+        <label for="chk-${si}-${ii}">${item}</label>
+      </div>`).join('');
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-size:14px;font-weight:500;">${section.phase}</div>
+        <div style="font-size:12px;color:#888;">${done}/${section.items.length}</div>
+      </div>
+      ${items}
+    </div>`;
+  }).join('');
+}
+
+function updateResumen() {
+  const total = CHECKLISTS.reduce((s,sec)=>s+sec.items.length,0);
+  const done = CHECKLISTS.reduce((s,sec,si)=>s+sec.items.filter((_,ii)=>getCheck(si,ii)).length,0);
+  document.getElementById('s-zonas').textContent = appData.zonas.length;
+  document.getElementById('s-entries').textContent = appData.journal.length;
+  document.getElementById('s-tasks').textContent = Math.round((done/total)*100)+'%';
+  document.getElementById('s-decisions').textContent = appData.decisiones.length;
+
+  const progEl = document.getElementById('phase-progress');
+  if (progEl) progEl.innerHTML = CHECKLISTS.map((section,si)=>{
+    const t=section.items.length;
+    const d=section.items.filter((_,ii)=>getCheck(si,ii)).length;
+    const pct=Math.round((d/t)*100);
+    return `<div class="phase-row">
+      <div class="phase-name">${section.phase}</div>
+      <div class="phase-pct">${pct}%</div>
+      <div style="flex:2;"><div class="progress-wrap"><div class="progress-bar" style="width:${pct}%"></div></div></div>
+    </div>`;
+  }).join('');
+
+  const topEl = document.getElementById('top-zona');
+  if (appData.zonas.length) {
+    const top = [...appData.zonas].sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0))[0];
+    topEl.innerHTML = `<span style="font-size:15px;font-weight:500;">${top.nombre}</span>${top.provincia?` <span style="color:#888;">· ${top.provincia}</span>`:''} <span style="color:#888;margin-left:8px;">${parseFloat(top.score).toFixed(1)}/5</span>`;
+  } else topEl.textContent = 'Todavía no hay zonas cargadas.';
+
+  const lastEl = document.getElementById('last-entry');
+  if (appData.journal.length) {
+    const e=appData.journal[0];
+    const tc=TAG_COLORS[e.etiqueta]||TAG_COLORS.general;
+    lastEl.innerHTML=`<span class="tag" style="background:${tc.bg};color:${tc.color};display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;margin-bottom:6px;">${e.etiqueta}</span><br><span style="font-size:13px;">${e.texto.slice(0,200)}${e.texto.length>200?'…':''}</span>`;
+  } else lastEl.textContent='Todavía no hay entradas.';
+}
+
+// Init
+buildRatingBtns();
+if (false) {
+  document.getElementById('setup-banner').style.display='block';
+  renderAll();
+} else {
+  loadAll();
+}
+</script>
+</body>
+</html>
