@@ -5,92 +5,101 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Casa Proyecto · Ve + Juanma</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f4; color: #1a1a1a; min-height: 100vh; }
-  .app { max-width: 720px; margin: 0 auto; padding: 2rem 1rem; }
-  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
-  .subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
-  .tabs { display: flex; gap: 4px; border-bottom: 1px solid #e5e5e5; margin-bottom: 1.5rem; flex-wrap: wrap; background: #f8f7f4; position: sticky; top: 0; z-index: 10; padding-top: 0.5rem; }
-  .tab { padding: 8px 14px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; color: #888; background: none; border-top: none; border-left: none; border-right: none; white-space: nowrap; font-family: inherit; }
-  .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; font-weight: 500; }
-  .tab:hover:not(.active) { color: #1a1a1a; }
-  .panel { display: none; }
-  .panel.active { display: block; }
-  .card { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 12px; }
-  input[type="text"], input[type="date"], textarea, select {
-    width: 100%; font-size: 14px; padding: 8px 10px;
-    border: 1px solid #ddd; border-radius: 8px;
-    background: #fafafa; color: #1a1a1a;
-    font-family: inherit; resize: vertical;
-  }
-  input:focus, textarea:focus, select:focus { outline: none; border-color: #1a1a1a; background: #fff; }
-  button.btn {
-    padding: 8px 16px; font-size: 13px; cursor: pointer;
-    border-radius: 8px; border: 1px solid #ddd;
-    background: #fff; color: #1a1a1a; font-family: inherit;
-  }
-  button.btn:hover { background: #f5f5f5; }
-  button.btn:active { transform: scale(0.98); }
-  button.btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
-  button.btn-primary:hover { background: #333; }
-  .form-row { margin-bottom: 12px; }
-  .form-label { font-size: 12px; color: #888; margin-bottom: 4px; display: block; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .metric { background: #f5f5f3; border-radius: 8px; padding: 1rem; }
-  .metric-label { font-size: 12px; color: #888; margin-bottom: 4px; }
-  .metric-value { font-size: 22px; font-weight: 500; }
-  .section-title { font-size: 15px; font-weight: 500; margin-bottom: 1rem; }
-  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; }
-  .del-btn { font-size: 11px; color: #bbb; cursor: pointer; background: none; border: none; font-family: inherit; }
-  .del-btn:hover { color: #c0392b; }
-  .checklist-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid #f0f0f0; }
-  .checklist-item:last-child { border-bottom: none; }
-  .checklist-item input[type="checkbox"] { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; cursor: pointer; accent-color: #1a1a1a; }
-  .checklist-item label { font-size: 13px; cursor: pointer; line-height: 1.5; }
-  .checklist-item input:checked + label { color: #bbb; text-decoration: line-through; }
-  .progress-wrap { background: #eee; border-radius: 99px; height: 5px; margin-top: 6px; }
-  .progress-bar { height: 5px; border-radius: 99px; background: #1a1a1a; transition: width 0.3s; }
-  .phase-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .phase-name { font-size: 13px; flex: 1; }
-  .phase-pct { font-size: 12px; color: #888; min-width: 32px; text-align: right; }
-  .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 99px; display: inline-block; }
-  .s-interesante { background: #e1f5ee; color: #0a6640; }
-  .s-descartado { background: #fce8e8; color: #a32d2d; }
-  .s-pendiente { background: #fef3e2; color: #7a4a00; }
-  .s-potencial { background: #eeecfe; color: #3c3489; }
-  .s-elegida { background: #e6f4ea; color: #1e6b3c; }
-  .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .rating-label { font-size: 13px; width: 160px; flex-shrink: 0; color: #555; }
-  .rating-btns { display: flex; gap: 4px; }
-  .rating-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; cursor: pointer; font-size: 12px; color: #888; font-family: inherit; }
-  .rating-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
-  .zona-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 10px; }
-  .zona-card.elegida { border: 2px solid #1d9e75; }
-  .criterios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 10px 0; }
-  .criterio-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-  .criterio-label { color: #888; }
-  .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; font-size: 12px; }
-  .pro::before { content: "+ "; color: #1d9e75; font-weight: 500; }
-  .con::before { content: "- "; color: #c0392b; font-weight: 500; }
-  .pro, .con { color: #666; margin-bottom: 3px; }
-  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1a1a1a; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 13px; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
-  .toast.show { opacity: 1; }
-  .loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
-  .setup-banner { background: #fff8e6; border: 1px solid #fcd34d; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 13px; color: #7a4a00; }
-  .setup-banner input { margin-top: 8px; background: #fff; }
-  .setup-banner button { margin-top: 8px; }
-  @media (max-width: 500px) {
-    .grid-2 { grid-template-columns: 1fr; }
-    .criterios-grid { grid-template-columns: 1fr; }
-    .pros-cons { grid-template-columns: 1fr; }
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f4; color: #1a1a1a; min-height: 100vh; }
+.app { max-width: 720px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid #e5e5e5; margin-bottom: 1.5rem; flex-wrap: wrap; background: #f8f7f4; position: sticky; top: 0; z-index: 10; padding-top: 0.5rem; }
+.tab { padding: 8px 14px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; color: #888; background: none; border-top: none; border-left: none; border-right: none; white-space: nowrap; font-family: inherit; }
+.tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; font-weight: 500; }
+.tab:hover:not(.active) { color: #1a1a1a; }
+.panel { display: none; }
+.panel.active { display: block; }
+.card { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 12px; }
+input[type="text"], input[type="date"], textarea, select {
+  width: 100%; font-size: 14px; padding: 8px 10px;
+  border: 1px solid #ddd; border-radius: 8px;
+  background: #fafafa; color: #1a1a1a; font-family: inherit; resize: vertical;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: #1a1a1a; background: #fff; }
+button.btn { padding: 8px 16px; font-size: 13px; cursor: pointer; border-radius: 8px; border: 1px solid #ddd; background: #fff; color: #1a1a1a; font-family: inherit; }
+button.btn:hover { background: #f5f5f5; }
+button.btn:active { transform: scale(0.98); }
+button.btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+button.btn-primary:hover { background: #333; }
+button.btn-sm { padding: 4px 10px; font-size: 12px; }
+.form-row { margin-bottom: 12px; }
+.form-label { font-size: 12px; color: #888; margin-bottom: 4px; display: block; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.metric { background: #f5f5f3; border-radius: 8px; padding: 1rem; }
+.metric-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+.metric-value { font-size: 22px; font-weight: 500; }
+.section-title { font-size: 15px; font-weight: 500; margin-bottom: 1rem; }
+.tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; }
+.del-btn { font-size: 11px; color: #bbb; cursor: pointer; background: none; border: none; font-family: inherit; padding: 0; }
+.del-btn:hover { color: #c0392b; }
+.edit-btn { font-size: 11px; color: #bbb; cursor: pointer; background: none; border: none; font-family: inherit; padding: 0; }
+.edit-btn:hover { color: #1a1a1a; }
+
+/* Checklist editable */
+.etapa-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 12px; }
+.etapa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.etapa-title-wrap { display: flex; align-items: center; gap: 8px; flex: 1; }
+.etapa-title { font-size: 14px; font-weight: 500; }
+.etapa-title-input { font-size: 14px; font-weight: 500; padding: 3px 8px; border: 1px solid #ddd; border-radius: 6px; background: #fafafa; font-family: inherit; width: auto; flex: 1; }
+.etapa-actions { display: flex; gap: 10px; align-items: center; }
+.etapa-count { font-size: 12px; color: #888; }
+.checklist-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f5f5f5; }
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item input[type="checkbox"] { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; cursor: pointer; accent-color: #1a1a1a; }
+.checklist-item label { font-size: 13px; cursor: pointer; line-height: 1.5; flex: 1; }
+.checklist-item input:checked + label { color: #bbb; text-decoration: line-through; }
+.item-actions { display: flex; gap: 8px; opacity: 0; transition: opacity 0.15s; flex-shrink: 0; padding-top: 2px; }
+.checklist-item:hover .item-actions { opacity: 1; }
+.item-edit-input { font-size: 13px; padding: 2px 6px; border: 1px solid #ddd; border-radius: 6px; background: #fafafa; font-family: inherit; flex: 1; }
+.add-item-row { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+.add-item-row input { font-size: 13px; padding: 6px 10px; }
+.add-etapa-card { background: #fafaf8; border: 1px dashed #ddd; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 12px; }
+
+.progress-wrap { background: #eee; border-radius: 99px; height: 5px; margin-top: 6px; }
+.progress-bar { height: 5px; border-radius: 99px; background: #1a1a1a; transition: width 0.3s; }
+.phase-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.phase-name { font-size: 13px; flex: 1; }
+.phase-pct { font-size: 12px; color: #888; min-width: 32px; text-align: right; }
+.status-badge { font-size: 11px; padding: 3px 10px; border-radius: 99px; display: inline-block; }
+.s-interesante { background: #e1f5ee; color: #0a6640; }
+.s-descartado { background: #fce8e8; color: #a32d2d; }
+.s-pendiente { background: #fef3e2; color: #7a4a00; }
+.s-potencial { background: #eeecfe; color: #3c3489; }
+.s-elegida { background: #e6f4ea; color: #1e6b3c; }
+.rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.rating-label { font-size: 13px; width: 160px; flex-shrink: 0; color: #555; }
+.rating-btns { display: flex; gap: 4px; }
+.rating-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; cursor: pointer; font-size: 12px; color: #888; font-family: inherit; }
+.rating-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.zona-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 10px; }
+.zona-card.elegida { border: 2px solid #1d9e75; }
+.criterios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 10px 0; }
+.criterio-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+.criterio-label { color: #888; }
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; font-size: 12px; }
+.pro::before { content: "+ "; color: #1d9e75; font-weight: 500; }
+.con::before { content: "- "; color: #c0392b; font-weight: 500; }
+.pro, .con { color: #666; margin-bottom: 3px; }
+.toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1a1a1a; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 13px; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; }
+.loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
+@media (max-width: 500px) {
+  .grid-2, .criterios-grid, .pros-cons { grid-template-columns: 1fr; }
+  .rating-label { width: 120px; }
+}
 </style>
 </head>
 <body>
 <div class="app">
   <h1>Nuestra casa</h1>
   <p class="subtitle">Ve + Juanma · Proyecto en curso</p>
-
 
   <div class="tabs">
     <button class="tab active" onclick="showTab('resumen',this)">Resumen</button>
@@ -175,6 +184,13 @@
   <!-- CHECKLIST -->
   <div id="tab-checklist" class="panel">
     <div id="checklist-container"><div class="loading">Cargando...</div></div>
+    <div class="add-etapa-card">
+      <div class="section-title" style="font-size:14px;margin-bottom:8px;">Nueva etapa</div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="new-etapa-nombre" placeholder="Nombre de la etapa" style="font-size:13px;">
+        <button class="btn btn-primary btn-sm" onclick="addEtapa()" style="white-space:nowrap;">Agregar etapa</button>
+      </div>
+    </div>
   </div>
 
   <!-- VISITAS -->
@@ -212,56 +228,58 @@
 <div class="toast" id="toast"></div>
 
 <script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRb7YVUxjDgnj_rXjh8CpBdhZoMbP8L7yfOIZZLKXnE7YSIqqnW164eID8usq5yt5w/exec';
 
-const CHECKLISTS = [
-  { phase:'Exploración de zonas', items:[
-    'Listar al menos 3 zonas candidatas en el comparador',
-    'Investigar cada zona online (foros, grupos, Facebook local)',
-    'Comparar puntajes y elegir 2 finalistas',
-    'Visitar la zona 1 un fin de semana completo',
-    'Visitar la zona 2 si la 1 no convence',
-    'Tomar la decisión final de zona',
+const DEFAULT_CHECKLISTS = [
+  { etapa_id:'e1', etapa_nombre:'Exploración de zonas', etapa_orden:1, items:[
+    {item_id:'e1i1',item_texto:'Listar al menos 3 zonas candidatas en el comparador',item_orden:1},
+    {item_id:'e1i2',item_texto:'Investigar cada zona online (foros, grupos, Facebook local)',item_orden:2},
+    {item_id:'e1i3',item_texto:'Comparar puntajes y elegir 2 finalistas',item_orden:3},
+    {item_id:'e1i4',item_texto:'Visitar la zona 1 un fin de semana completo',item_orden:4},
+    {item_id:'e1i5',item_texto:'Visitar la zona 2 si la 1 no convence',item_orden:5},
+    {item_id:'e1i6',item_texto:'Tomar la decisión final de zona',item_orden:6},
   ]},
-  { phase:'Terreno', items:[
-    'Definir tamaño mínimo (casa + taller + animales)',
-    'Verificar zonificación antes de comprar',
-    'Confirmar servicios: luz, agua, gas o alternativas',
-    'Contratar estudio de suelo antes de cerrar compra',
-    'Verificar escritura, sin deudas ni embargos',
-    'Consultar si se puede tener gallinas en esa zona',
-    'Consultar sobre actividad comercial desde domicilio',
+  { etapa_id:'e2', etapa_nombre:'Terreno', etapa_orden:2, items:[
+    {item_id:'e2i1',item_texto:'Definir tamaño mínimo (casa + taller + animales)',item_orden:1},
+    {item_id:'e2i2',item_texto:'Verificar zonificación antes de comprar',item_orden:2},
+    {item_id:'e2i3',item_texto:'Confirmar servicios: luz, agua, gas o alternativas',item_orden:3},
+    {item_id:'e2i4',item_texto:'Contratar estudio de suelo antes de cerrar compra',item_orden:4},
+    {item_id:'e2i5',item_texto:'Verificar escritura, sin deudas ni embargos',item_orden:5},
+    {item_id:'e2i6',item_texto:'Consultar si se puede tener gallinas en esa zona',item_orden:6},
+    {item_id:'e2i7',item_texto:'Consultar sobre actividad comercial desde domicilio',item_orden:7},
   ]},
-  { phase:'Equipo profesional', items:[
-    'Buscar arquitectos con experiencia en la zona',
-    'Hacer al menos 2-3 consultas antes de elegir',
-    'Definir el sistema constructivo',
-    'Contratar gestor o escribano para trámites',
-    'Consultar instaladores matriculados',
+  { etapa_id:'e3', etapa_nombre:'Equipo profesional', etapa_orden:3, items:[
+    {item_id:'e3i1',item_texto:'Buscar arquitectos con experiencia en la zona',item_orden:1},
+    {item_id:'e3i2',item_texto:'Hacer al menos 2-3 consultas antes de elegir',item_orden:2},
+    {item_id:'e3i3',item_texto:'Definir el sistema constructivo',item_orden:3},
+    {item_id:'e3i4',item_texto:'Contratar gestor o escribano para trámites',item_orden:4},
+    {item_id:'e3i5',item_texto:'Consultar instaladores matriculados',item_orden:5},
   ]},
-  { phase:'Proyecto y diseño', items:[
-    'Definir el programa de la casa: cuartos, espacios',
-    'Planificar el taller desde el anteproyecto',
-    'Planificar espacio exterior: Sandy, animales, huerta',
-    'Obtener permiso de construcción municipal',
-    'Definir orientación de la casa (taller con luz norte)',
+  { etapa_id:'e4', etapa_nombre:'Proyecto y diseño', etapa_orden:4, items:[
+    {item_id:'e4i1',item_texto:'Definir el programa de la casa: cuartos, espacios',item_orden:1},
+    {item_id:'e4i2',item_texto:'Planificar el taller desde el anteproyecto',item_orden:2},
+    {item_id:'e4i3',item_texto:'Planificar espacio exterior: Sandy, animales, huerta',item_orden:3},
+    {item_id:'e4i4',item_texto:'Obtener permiso de construcción municipal',item_orden:4},
+    {item_id:'e4i5',item_texto:'Definir orientación de la casa (taller con luz norte)',item_orden:5},
   ]},
-  { phase:'Trabajo y economía', items:[
-    'Definir qué hace Juanma laboralmente en destino',
-    'Investigar el mercado laboral local de su rubro',
-    'Evaluar estructura legal del taller de Ve',
-    'Definir si el taller vende presencial, online o ambos',
-    'Abrir ahorro específico para el proyecto',
-    'Armar presupuesto estimado completo',
+  { etapa_id:'e5', etapa_nombre:'Trabajo y economía', etapa_orden:5, items:[
+    {item_id:'e5i1',item_texto:'Definir qué hace Juanma laboralmente en destino',item_orden:1},
+    {item_id:'e5i2',item_texto:'Investigar el mercado laboral local de su rubro',item_orden:2},
+    {item_id:'e5i3',item_texto:'Evaluar estructura legal del taller de Ve',item_orden:3},
+    {item_id:'e5i4',item_texto:'Definir si el taller vende presencial, online o ambos',item_orden:4},
+    {item_id:'e5i5',item_texto:'Abrir ahorro específico para el proyecto',item_orden:5},
+    {item_id:'e5i6',item_texto:'Armar presupuesto estimado completo',item_orden:6},
   ]},
-  { phase:'Mudanza y logística', items:[
-    'Resolver dónde vivir durante la obra',
-    'Planificar traslado con un solo auto',
-    'Conseguir flete para muebles',
-    'Buscar veterinaria en destino para Sandy',
-    'Asegurar cerco perimetral desde el día uno',
-    'Transferir médicos, trámites y servicios',
+  { etapa_id:'e6', etapa_nombre:'Mudanza y logística', etapa_orden:6, items:[
+    {item_id:'e6i1',item_texto:'Resolver dónde vivir durante la obra',item_orden:1},
+    {item_id:'e6i2',item_texto:'Planificar traslado con un solo auto',item_orden:2},
+    {item_id:'e6i3',item_texto:'Conseguir flete para muebles',item_orden:3},
+    {item_id:'e6i4',item_texto:'Buscar veterinaria en destino para Sandy',item_orden:4},
+    {item_id:'e6i5',item_texto:'Asegurar cerco perimetral desde el día uno',item_orden:5},
+    {item_id:'e6i6',item_texto:'Transferir médicos, trámites y servicios',item_orden:6},
   ]},
 ];
+
 const TAG_COLORS = {
   general:{bg:'#f1efe8',color:'#5f5e5a'}, zona:{bg:'#eeedfe',color:'#3c3489'},
   terreno:{bg:'#e1f5ee',color:'#0f6e56'}, arquitecto:{bg:'#eeedfe',color:'#534ab7'},
@@ -276,10 +294,13 @@ const CRITERIOS = [
   {id:'taller',label:'Potencial taller'},
 ];
 
-let scriptUrl = 'https://script.google.com/macros/s/AKfycbyRb7YVUxjDgnj_rXjh8CpBdhZoMbP8L7yfOIZZLKXnE7YSIqqnW164eID8usq5yt5w/exec';
-let appData = { journal:[], zonas:[], visitas:[], decisiones:[], checklist:[] };
+let appData = { journal:[], zonas:[], visitas:[], decisiones:[], checklist:[], checklist_structure:[] };
+let etapas = [];
+let checkStates = {};
 let ratings = {};
 CRITERIOS.forEach(c => ratings[c.id] = 0);
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
 function toast(msg) {
   const el = document.getElementById('toast');
@@ -288,44 +309,82 @@ function toast(msg) {
   setTimeout(() => el.classList.remove('show'), 2500);
 }
 
-function saveScriptUrl() {
-  const val = document.getElementById('script-url-input').value.trim();
-  if (!val) return;
-  localStorage.setItem(SCRIPT_URL_KEY, val);
-  scriptUrl = val;
-  document.getElementById('setup-banner').style.display = 'none';
-  loadAll();
-  toast('Conectado correctamente');
-}
-
 async function api(params, body) {
-  if (!scriptUrl) return null;
   try {
     if (body) {
-      const res = await fetch(scriptUrl, { method:'POST', body: JSON.stringify(body) });
+      const res = await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify(body) });
       return await res.json();
     } else {
-      const url = scriptUrl + '?' + new URLSearchParams(params);
-      const res = await fetch(url);
+      const res = await fetch(SCRIPT_URL + '?' + new URLSearchParams(params));
       return await res.json();
     }
-  } catch(e) {
-    toast('Error de conexión');
-    return null;
-  }
+  } catch(e) { toast('Error de conexión'); return null; }
 }
 
 async function loadAll() {
   const data = await api({ action:'readAll' });
   if (!data) return;
+  appData = { ...appData, ...data };
 
-  appData.journal = data.journal || [];
-  appData.zonas = data.zonas || [];
-  appData.visitas = data.visitas || [];
-  appData.decisiones = data.decisiones || [];
-  appData.checklist = data.checklist || [];
+  // Reconstruir estructura de etapas
+  if (data.checklist_structure && data.checklist_structure.length > 0) {
+    buildEtapasFromSheet(data.checklist_structure);
+  } else {
+    // Primera vez: cargar defaults y guardar en sheet
+    etapas = JSON.parse(JSON.stringify(DEFAULT_CHECKLISTS));
+    await pushStructureToSheet();
+  }
+
+  // Reconstruir estados
+  checkStates = {};
+  (data.checklist || []).forEach(r => {
+    checkStates[`${r.etapa_id}__${r.item_id}`] = r.completado === 'TRUE';
+  });
 
   renderAll();
+}
+
+function buildEtapasFromSheet(rows) {
+  const etapaMap = {};
+  rows.forEach(r => {
+    if (!etapaMap[r.etapa_id]) {
+      etapaMap[r.etapa_id] = {
+        etapa_id: r.etapa_id,
+        etapa_nombre: r.etapa_nombre,
+        etapa_orden: parseInt(r.etapa_orden) || 0,
+        items: []
+      };
+    }
+    if (r.item_id) {
+      etapaMap[r.etapa_id].items.push({
+        item_id: r.item_id,
+        item_texto: r.item_texto,
+        item_orden: parseInt(r.item_orden) || 0
+      });
+    }
+  });
+  etapas = Object.values(etapaMap).sort((a,b) => a.etapa_orden - b.etapa_orden);
+  etapas.forEach(e => e.items.sort((a,b) => a.item_orden - b.item_orden));
+}
+
+async function pushStructureToSheet() {
+  const rows = [];
+  etapas.forEach(e => {
+    e.items.forEach(item => {
+      rows.push({
+        etapa_id: e.etapa_id,
+        etapa_nombre: e.etapa_nombre,
+        etapa_orden: e.etapa_orden,
+        item_id: item.item_id,
+        item_texto: item.item_texto,
+        item_orden: item.item_orden
+      });
+    });
+    if (!e.items.length) {
+      rows.push({ etapa_id:e.etapa_id, etapa_nombre:e.etapa_nombre, etapa_orden:e.etapa_orden, item_id:'', item_texto:'', item_orden:'' });
+    }
+  });
+  await api(null, { action:'saveChecklistStructure', data:rows });
 }
 
 function renderAll() {
@@ -344,50 +403,196 @@ function showTab(id, btn) {
   btn.classList.add('active');
 }
 
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+// ---- CHECKLIST ----
 
-function renderStars(val) {
-  return [1,2,3,4,5].map(n => `<span style="color:${n<=val?'#ef9f27':'#ddd'};font-size:13px;">★</span>`).join('');
+function getCheck(etapa_id, item_id) {
+  return checkStates[`${etapa_id}__${item_id}`] || false;
 }
 
+async function toggleCheck(etapa_id, item_id) {
+  const newVal = !getCheck(etapa_id, item_id);
+  checkStates[`${etapa_id}__${item_id}`] = newVal;
+  updateResumen();
+  const chk = document.getElementById(`chk-${etapa_id}-${item_id}`);
+  if (chk) chk.checked = newVal;
+  updateEtapaCount(etapa_id);
+  await api(null, { action:'toggleCheck', etapa_id, item_id, completado: newVal ? 'TRUE' : 'FALSE' });
+}
+
+function updateEtapaCount(etapa_id) {
+  const etapa = etapas.find(e => e.etapa_id === etapa_id);
+  if (!etapa) return;
+  const done = etapa.items.filter(i => getCheck(etapa_id, i.item_id)).length;
+  const el = document.getElementById(`count-${etapa_id}`);
+  if (el) el.textContent = `${done}/${etapa.items.length}`;
+}
+
+async function addEtapa() {
+  const nombre = document.getElementById('new-etapa-nombre').value.trim();
+  if (!nombre) return;
+  const etapa = { etapa_id: uid(), etapa_nombre: nombre, etapa_orden: etapas.length + 1, items: [] };
+  etapas.push(etapa);
+  document.getElementById('new-etapa-nombre').value = '';
+  renderChecklist();
+  updateResumen();
+  await pushStructureToSheet();
+  toast('Etapa agregada');
+}
+
+async function deleteEtapa(etapa_id) {
+  etapas = etapas.filter(e => e.etapa_id !== etapa_id);
+  Object.keys(checkStates).forEach(k => { if (k.startsWith(etapa_id + '__')) delete checkStates[k]; });
+  renderChecklist();
+  updateResumen();
+  await api(null, { action:'deleteChecklistEtapa', etapa_id });
+  toast('Etapa eliminada');
+}
+
+function startEditEtapa(etapa_id) {
+  const etapa = etapas.find(e => e.etapa_id === etapa_id);
+  const titleEl = document.getElementById(`etapa-title-${etapa_id}`);
+  const actionsEl = document.getElementById(`etapa-title-actions-${etapa_id}`);
+  titleEl.innerHTML = `<input class="etapa-title-input" id="etapa-input-${etapa_id}" value="${etapa.etapa_nombre}" onkeydown="if(event.key==='Enter')saveEditEtapa('${etapa_id}')">
+    <button class="btn btn-sm" onclick="saveEditEtapa('${etapa_id}')">Guardar</button>
+    <button class="btn btn-sm" onclick="renderChecklist()">Cancelar</button>`;
+  setTimeout(() => { const inp = document.getElementById(`etapa-input-${etapa_id}`); if(inp) inp.focus(); }, 50);
+}
+
+async function saveEditEtapa(etapa_id) {
+  const inp = document.getElementById(`etapa-input-${etapa_id}`);
+  if (!inp) return;
+  const nombre = inp.value.trim();
+  if (!nombre) return;
+  const etapa = etapas.find(e => e.etapa_id === etapa_id);
+  etapa.etapa_nombre = nombre;
+  renderChecklist();
+  await api(null, { action:'updateEtapaNombre', etapa_id, nombre });
+  toast('Etapa actualizada');
+}
+
+async function addItem(etapa_id) {
+  const inp = document.getElementById(`new-item-${etapa_id}`);
+  const texto = inp.value.trim();
+  if (!texto) return;
+  const etapa = etapas.find(e => e.etapa_id === etapa_id);
+  const item = { item_id: uid(), item_texto: texto, item_orden: etapa.items.length + 1 };
+  etapa.items.push(item);
+  inp.value = '';
+  renderChecklist();
+  updateResumen();
+  await pushStructureToSheet();
+  toast('Ítem agregado');
+}
+
+async function deleteItem(etapa_id, item_id) {
+  const etapa = etapas.find(e => e.etapa_id === etapa_id);
+  etapa.items = etapa.items.filter(i => i.item_id !== item_id);
+  delete checkStates[`${etapa_id}__${item_id}`];
+  renderChecklist();
+  updateResumen();
+  await api(null, { action:'deleteChecklistItem', etapa_id, item_id });
+  toast('Ítem eliminado');
+}
+
+function startEditItem(etapa_id, item_id) {
+  const etapa = etapas.find(e => e.etapa_id === etapa_id);
+  const item = etapa.items.find(i => i.item_id === item_id);
+  const labelEl = document.getElementById(`item-label-${etapa_id}-${item_id}`);
+  const actionsEl = document.getElementById(`item-actions-${etapa_id}-${item_id}`);
+  labelEl.outerHTML = `<input class="item-edit-input" id="item-input-${etapa_id}-${item_id}" value="${item.item_texto}" onkeydown="if(event.key==='Enter')saveEditItem('${etapa_id}','${item_id}')">
+    <div style="display:flex;gap:6px;flex-shrink:0;">
+      <button class="btn btn-sm" onclick="saveEditItem('${etapa_id}','${item_id}')">Guardar</button>
+      <button class="btn btn-sm" onclick="renderChecklist()">Cancelar</button>
+    </div>`;
+  actionsEl.style.display = 'none';
+  setTimeout(() => { const inp = document.getElementById(`item-input-${etapa_id}-${item_id}`); if(inp) inp.focus(); }, 50);
+}
+
+async function saveEditItem(etapa_id, item_id) {
+  const inp = document.getElementById(`item-input-${etapa_id}-${item_id}`);
+  if (!inp) return;
+  const texto = inp.value.trim();
+  if (!texto) return;
+  const etapa = etapas.find(e => e.etapa_id === etapa_id);
+  const item = etapa.items.find(i => i.item_id === item_id);
+  item.item_texto = texto;
+  renderChecklist();
+  await api(null, { action:'updateChecklistItem', etapa_id, item_id, texto });
+  toast('Ítem actualizado');
+}
+
+function renderChecklist() {
+  const el = document.getElementById('checklist-container');
+  if (!etapas.length) {
+    el.innerHTML = '<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay etapas. Agregá la primera abajo.</div>';
+    return;
+  }
+  el.innerHTML = etapas.map(etapa => {
+    const done = etapa.items.filter(i => getCheck(etapa.etapa_id, i.item_id)).length;
+    const items = etapa.items.map(item => {
+      const checked = getCheck(etapa.etapa_id, item.item_id);
+      return `<div class="checklist-item">
+        <input type="checkbox" id="chk-${etapa.etapa_id}-${item.item_id}" ${checked?'checked':''} onchange="toggleCheck('${etapa.etapa_id}','${item.item_id}')">
+        <label id="item-label-${etapa.etapa_id}-${item.item_id}" for="chk-${etapa.etapa_id}-${item.item_id}">${item.item_texto}</label>
+        <div class="item-actions" id="item-actions-${etapa.etapa_id}-${item.item_id}">
+          <button class="edit-btn" onclick="startEditItem('${etapa.etapa_id}','${item.item_id}')">editar</button>
+          <button class="del-btn" onclick="deleteItem('${etapa.etapa_id}','${item.item_id}')">eliminar</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="etapa-card">
+      <div class="etapa-header">
+        <div class="etapa-title-wrap" id="etapa-title-${etapa.etapa_id}">
+          <span class="etapa-title">${etapa.etapa_nombre}</span>
+          <button class="edit-btn" onclick="startEditEtapa('${etapa.etapa_id}')">editar</button>
+        </div>
+        <div class="etapa-actions">
+          <span class="etapa-count" id="count-${etapa.etapa_id}">${done}/${etapa.items.length}</span>
+          <button class="del-btn" onclick="deleteEtapa('${etapa.etapa_id}')">eliminar etapa</button>
+        </div>
+      </div>
+      ${items}
+      <div class="add-item-row">
+        <input type="text" id="new-item-${etapa.etapa_id}" placeholder="Nuevo ítem..." onkeydown="if(event.key==='Enter')addItem('${etapa.etapa_id}')">
+        <button class="btn btn-primary btn-sm" onclick="addItem('${etapa.etapa_id}')">Agregar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- ZONAS ----
 function buildRatingBtns() {
   const el = document.getElementById('rating-form');
   if (!el) return;
   el.innerHTML = CRITERIOS.map(c => `
     <div class="rating-row">
       <span class="rating-label">${c.label}</span>
-      <div class="rating-btns">
-        ${[1,2,3,4,5].map(n=>`<button class="rating-btn${ratings[c.id]===n?' active':''}" onclick="setRating('${c.id}',${n})">${n}</button>`).join('')}
-      </div>
+      <div class="rating-btns">${[1,2,3,4,5].map(n=>`<button class="rating-btn${ratings[c.id]===n?' active':''}" onclick="setRating('${c.id}',${n})">${n}</button>`).join('')}</div>
     </div>`).join('');
 }
-
 function setRating(id, val) { ratings[id] = val; buildRatingBtns(); }
+function renderStars(val) { return [1,2,3,4,5].map(n=>`<span style="color:${n<=val?'#ef9f27':'#ddd'};font-size:13px;">★</span>`).join(''); }
 
 async function addZona() {
   const nombre = document.getElementById('z-nombre').value.trim();
   if (!nombre) return;
-  const score = Math.round(CRITERIOS.reduce((s,c)=>s+ratings[c.id],0) / CRITERIOS.length * 10) / 10;
-  const pros = document.getElementById('z-pros').value.trim().split('\n').filter(Boolean).join('|');
-  const cons = document.getElementById('z-cons').value.trim().split('\n').filter(Boolean).join('|');
+  const score = Math.round(CRITERIOS.reduce((s,c)=>s+(ratings[c.id]||0),0) / CRITERIOS.length * 10) / 10;
   const zona = {
-    id: uid(), nombre, provincia: document.getElementById('z-prov').value.trim(),
+    id:uid(), nombre, provincia:document.getElementById('z-prov').value.trim(),
     clima:ratings.clima, distancia:ratings.distancia, servicios:ratings.servicios,
     costo:ratings.costo, terrenos:ratings.terrenos, comunidad:ratings.comunidad, taller:ratings.taller,
-    pros, contras:cons, notas:document.getElementById('z-notas').value.trim(),
+    pros:document.getElementById('z-pros').value.trim().split('\n').filter(Boolean).join('|'),
+    contras:document.getElementById('z-cons').value.trim().split('\n').filter(Boolean).join('|'),
+    notas:document.getElementById('z-notas').value.trim(),
     elegida: document.getElementById('z-elegida').checked ? 'TRUE' : 'FALSE',
     score
   };
   appData.zonas.push(zona);
-  renderZonas();
-  updateResumen();
+  renderZonas(); updateResumen();
   await api(null, { action:'write', section:'zonas', data:zona });
   toast('Zona guardada');
-  document.getElementById('z-nombre').value='';
-  document.getElementById('z-prov').value='';
-  document.getElementById('z-pros').value='';
-  document.getElementById('z-cons').value='';
-  document.getElementById('z-notas').value='';
+  ['z-nombre','z-prov','z-pros','z-cons','z-notas'].forEach(id => document.getElementById(id).value='');
   document.getElementById('z-elegida').checked=false;
   CRITERIOS.forEach(c=>ratings[c.id]=0);
   buildRatingBtns();
@@ -411,10 +616,7 @@ async function toggleElegida(id) {
 
 function renderZonas() {
   const el = document.getElementById('zonas-list');
-  if (!appData.zonas.length) {
-    el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay zonas. Agregá la primera candidata arriba.</div>';
-    return;
-  }
+  if (!appData.zonas.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay zonas. Agregá la primera candidata arriba.</div>'; return; }
   const sorted = [...appData.zonas].sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0));
   el.innerHTML = sorted.map(z => {
     const elegida = z.elegida==='TRUE';
@@ -432,19 +634,18 @@ function renderZonas() {
           <div style="font-size:11px;color:#888;">puntaje</div>
         </div>
       </div>
-      <div class="criterios-grid">
-        ${CRITERIOS.map(c=>`<div class="criterio-item"><span class="criterio-label">${c.label}</span><span>${renderStars(parseInt(z[c.id])||0)}</span></div>`).join('')}
-      </div>
+      <div class="criterios-grid">${CRITERIOS.map(c=>`<div class="criterio-item"><span class="criterio-label">${c.label}</span><span>${renderStars(parseInt(z[c.id])||0)}</span></div>`).join('')}</div>
       ${(pros.length||cons.length)?`<div class="pros-cons"><div>${pros.map(p=>`<div class="pro">${p}</div>`).join('')}</div><div>${cons.map(c=>`<div class="con">${c}</div>`).join('')}</div></div>`:''}
       ${z.notas?`<div style="font-size:12px;color:#888;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;">${z.notas}</div>`:''}
       <div style="margin-top:10px;display:flex;gap:8px;">
-        <button class="btn" onclick="toggleElegida('${z.id}')" style="font-size:12px;padding:5px 12px;">${elegida?'Desmarcar como elegida':'Marcar como elegida'}</button>
+        <button class="btn btn-sm" onclick="toggleElegida('${z.id}')">${elegida?'Desmarcar':'Marcar como elegida'}</button>
         <button class="del-btn" onclick="deleteZona('${z.id}')">eliminar</button>
       </div>
     </div>`;
   }).join('');
 }
 
+// ---- JOURNAL ----
 async function addEntry() {
   const text = document.getElementById('j-text').value.trim();
   if (!text) return;
@@ -455,51 +656,45 @@ async function addEntry() {
   toast('Entrada guardada');
   document.getElementById('j-text').value='';
 }
-
 async function deleteEntry(id) {
   appData.journal = appData.journal.filter(e=>e.id!==id);
   renderEntries(); updateResumen();
   await api(null, { action:'delete', section:'journal', id });
-  toast('Entrada eliminada');
+  toast('Eliminada');
 }
-
 function renderEntries() {
   const el = document.getElementById('entries-list');
   if (!appData.journal.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay entradas.</div>'; return; }
   el.innerHTML = appData.journal.map(e => {
     const tc = TAG_COLORS[e.etiqueta]||TAG_COLORS.general;
-    const d = new Date(e.fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'});
     return `<div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
         <span class="tag" style="background:${tc.bg};color:${tc.color}">${e.etiqueta}</span>
         <button class="del-btn" onclick="deleteEntry('${e.id}')">eliminar</button>
       </div>
-      <div style="font-size:11px;color:#aaa;margin-bottom:4px;">${d}</div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:4px;">${new Date(e.fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'})}</div>
       <div style="font-size:14px;line-height:1.6;white-space:pre-wrap;">${e.texto}</div>
     </div>`;
   }).join('');
 }
 
+// ---- VISITAS ----
 async function addVisit() {
   const nombre = document.getElementById('v-nombre').value.trim();
   if (!nombre) return;
   const visit = { id:uid(), nombre, fecha:document.getElementById('v-fecha').value, estado:document.getElementById('v-estado').value, notas:document.getElementById('v-notas').value.trim() };
   appData.visitas.unshift(visit);
-  renderVisits(); updateResumen();
+  renderVisits();
   await api(null, { action:'write', section:'visitas', data:visit });
   toast('Visita guardada');
-  document.getElementById('v-nombre').value='';
-  document.getElementById('v-fecha').value='';
-  document.getElementById('v-notas').value='';
+  ['v-nombre','v-fecha','v-notas'].forEach(id=>document.getElementById(id).value='');
 }
-
 async function deleteVisit(id) {
   appData.visitas = appData.visitas.filter(v=>v.id!==id);
   renderVisits();
   await api(null, { action:'delete', section:'visitas', id });
-  toast('Visita eliminada');
+  toast('Eliminada');
 }
-
 function renderVisits() {
   const el = document.getElementById('visits-list');
   const labels={interesante:'Muy interesante',descartado:'Descartado',pendiente:'Pendiente',potencial:'Potencial'};
@@ -508,16 +703,14 @@ function renderVisits() {
     <div class="card">
       <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
         <div style="font-size:14px;font-weight:500;">${v.nombre}</div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          ${v.fecha?`<span style="font-size:12px;color:#aaa;">${v.fecha}</span>`:''}
-          <button class="del-btn" onclick="deleteVisit('${v.id}')">eliminar</button>
-        </div>
+        <div style="display:flex;gap:8px;align-items:center;">${v.fecha?`<span style="font-size:12px;color:#aaa;">${v.fecha}</span>`:''}<button class="del-btn" onclick="deleteVisit('${v.id}')">eliminar</button></div>
       </div>
       ${v.notas?`<div style="font-size:13px;color:#666;margin-bottom:8px;line-height:1.5;">${v.notas}</div>`:''}
       <span class="status-badge s-${v.estado}">${labels[v.estado]||v.estado}</span>
     </div>`).join('');
 }
 
+// ---- DECISIONES ----
 async function addDecision() {
   const texto = document.getElementById('d-texto').value.trim();
   if (!texto) return;
@@ -526,17 +719,14 @@ async function addDecision() {
   renderDecisions(); updateResumen();
   await api(null, { action:'write', section:'decisiones', data:dec });
   toast('Decisión guardada');
-  document.getElementById('d-texto').value='';
-  document.getElementById('d-razon').value='';
+  ['d-texto','d-razon'].forEach(id=>document.getElementById(id).value='');
 }
-
 async function deleteDecision(id) {
   appData.decisiones = appData.decisiones.filter(d=>d.id!==id);
   renderDecisions(); updateResumen();
   await api(null, { action:'delete', section:'decisiones', id });
-  toast('Decisión eliminada');
+  toast('Eliminada');
 }
-
 function renderDecisions() {
   const el = document.getElementById('decisions-list');
   if (!appData.decisiones.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay decisiones registradas.</div>'; return; }
@@ -551,81 +741,37 @@ function renderDecisions() {
     </div>`).join('');
 }
 
-async function toggleCheck(etapa_index, item_index) {
-  const existing = appData.checklist.find(c=>String(c.etapa_index)===String(etapa_index)&&String(c.item_index)===String(item_index));
-  const newVal = existing ? (existing.completado==='TRUE'?'FALSE':'TRUE') : 'TRUE';
-  if (existing) existing.completado = newVal;
-  else appData.checklist.push({etapa_index, item_index, completado: newVal});
-  renderChecklist(); updateResumen();
-  await api(null, { action:'toggleCheck', etapa_index, item_index, completado: newVal });
-}
-
-function getCheck(ei, ii) {
-  const r = appData.checklist.find(c=>String(c.etapa_index)===String(ei)&&String(c.item_index)===String(ii));
-  return r && r.completado==='TRUE';
-}
-
-function renderChecklist() {
-  const el = document.getElementById('checklist-container');
-  el.innerHTML = CHECKLISTS.map((section,si)=>{
-    const done = section.items.filter((_,ii)=>getCheck(si,ii)).length;
-    const items = section.items.map((item,ii)=>`
-      <div class="checklist-item">
-        <input type="checkbox" id="chk-${si}-${ii}" ${getCheck(si,ii)?'checked':''} onchange="toggleCheck(${si},${ii})">
-        <label for="chk-${si}-${ii}">${item}</label>
-      </div>`).join('');
-    return `<div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <div style="font-size:14px;font-weight:500;">${section.phase}</div>
-        <div style="font-size:12px;color:#888;">${done}/${section.items.length}</div>
-      </div>
-      ${items}
-    </div>`;
-  }).join('');
-}
-
+// ---- RESUMEN ----
 function updateResumen() {
-  const total = CHECKLISTS.reduce((s,sec)=>s+sec.items.length,0);
-  const done = CHECKLISTS.reduce((s,sec,si)=>s+sec.items.filter((_,ii)=>getCheck(si,ii)).length,0);
+  const totalItems = etapas.reduce((s,e)=>s+e.items.length,0);
+  const doneItems = etapas.reduce((s,e)=>s+e.items.filter(i=>getCheck(e.etapa_id,i.item_id)).length,0);
   document.getElementById('s-zonas').textContent = appData.zonas.length;
   document.getElementById('s-entries').textContent = appData.journal.length;
-  document.getElementById('s-tasks').textContent = Math.round((done/total)*100)+'%';
+  document.getElementById('s-tasks').textContent = totalItems ? Math.round((doneItems/totalItems)*100)+'%' : '0%';
   document.getElementById('s-decisions').textContent = appData.decisiones.length;
 
   const progEl = document.getElementById('phase-progress');
-  if (progEl) progEl.innerHTML = CHECKLISTS.map((section,si)=>{
-    const t=section.items.length;
-    const d=section.items.filter((_,ii)=>getCheck(si,ii)).length;
-    const pct=Math.round((d/t)*100);
-    return `<div class="phase-row">
-      <div class="phase-name">${section.phase}</div>
-      <div class="phase-pct">${pct}%</div>
-      <div style="flex:2;"><div class="progress-wrap"><div class="progress-bar" style="width:${pct}%"></div></div></div>
-    </div>`;
+  if (progEl) progEl.innerHTML = etapas.map(e=>{
+    const t=e.items.length; const d=e.items.filter(i=>getCheck(e.etapa_id,i.item_id)).length;
+    const pct=t?Math.round((d/t)*100):0;
+    return `<div class="phase-row"><div class="phase-name">${e.etapa_nombre}</div><div class="phase-pct">${pct}%</div><div style="flex:2;"><div class="progress-wrap"><div class="progress-bar" style="width:${pct}%"></div></div></div></div>`;
   }).join('');
 
   const topEl = document.getElementById('top-zona');
   if (appData.zonas.length) {
-    const top = [...appData.zonas].sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0))[0];
-    topEl.innerHTML = `<span style="font-size:15px;font-weight:500;">${top.nombre}</span>${top.provincia?` <span style="color:#888;">· ${top.provincia}</span>`:''} <span style="color:#888;margin-left:8px;">${parseFloat(top.score).toFixed(1)}/5</span>`;
-  } else topEl.textContent = 'Todavía no hay zonas cargadas.';
+    const top=[...appData.zonas].sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0))[0];
+    topEl.innerHTML=`<span style="font-size:15px;font-weight:500;">${top.nombre}</span>${top.provincia?` <span style="color:#888;">· ${top.provincia}</span>`:''} <span style="color:#888;margin-left:8px;">${parseFloat(top.score).toFixed(1)}/5</span>`;
+  } else topEl.textContent='Todavía no hay zonas cargadas.';
 
-  const lastEl = document.getElementById('last-entry');
+  const lastEl=document.getElementById('last-entry');
   if (appData.journal.length) {
-    const e=appData.journal[0];
-    const tc=TAG_COLORS[e.etiqueta]||TAG_COLORS.general;
-    lastEl.innerHTML=`<span class="tag" style="background:${tc.bg};color:${tc.color};display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;margin-bottom:6px;">${e.etiqueta}</span><br><span style="font-size:13px;">${e.texto.slice(0,200)}${e.texto.length>200?'…':''}</span>`;
+    const e=appData.journal[0]; const tc=TAG_COLORS[e.etiqueta]||TAG_COLORS.general;
+    lastEl.innerHTML=`<span class="tag" style="background:${tc.bg};color:${tc.color};display:inline-block;margin-bottom:6px;">${e.etiqueta}</span><br><span style="font-size:13px;">${e.texto.slice(0,200)}${e.texto.length>200?'…':''}</span>`;
   } else lastEl.textContent='Todavía no hay entradas.';
 }
 
-// Init
 buildRatingBtns();
-if (false) {
-  document.getElementById('setup-banner').style.display='block';
-  renderAll();
-} else {
-  loadAll();
-}
+loadAll();
 </script>
 </body>
 </html>
