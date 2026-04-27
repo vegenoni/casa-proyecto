@@ -113,9 +113,12 @@ button.btn-sm { padding: 4px 10px; font-size: 12px; }
     <div class="tabs" style="position:static;border:none;margin:0;padding:0;background:transparent;flex:1;">
       <button class="tab active" onclick="showTab('resumen',this)">Resumen</button>
       <button class="tab" onclick="showTab('zonas',this)">Zonas</button>
+      <button class="tab" onclick="showTab('terrenos',this)">Terrenos</button>
       <button class="tab" onclick="showTab('journal',this)">Journal</button>
       <button class="tab" onclick="showTab('checklist',this)">Checklist</button>
       <button class="tab" onclick="showTab('visitas',this)">Visitas</button>
+      <button class="tab" onclick="showTab('presupuesto',this)">Presupuesto</button>
+      <button class="tab" onclick="showTab('contactos',this)">Contactos</button>
       <button class="tab" onclick="showTab('mapa',this)">Mapa</button>
     </div>
     <div style="font-size:13px;font-weight:500;color:#1a1a1a;white-space:nowrap;padding:0.75rem 0;">Nuestra casa</div>
@@ -284,6 +287,158 @@ button.btn-sm { padding: 4px 10px; font-size: 12px; }
   </div>
 
   <!-- MAPA -->
+  <!-- PRESUPUESTO -->
+  <div id="tab-presupuesto" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Nueva cotización</div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Rubro</label>
+          <select id="p-rubro">
+            <option value="terreno">Terreno</option>
+            <option value="arquitecto">Arquitecto y honorarios</option>
+            <option value="construccion">Construcción</option>
+            <option value="instalaciones">Instalaciones</option>
+            <option value="materiales">Materiales</option>
+            <option value="legales">Trámites y legales</option>
+            <option value="otros">Otros</option>
+          </select>
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Estado</label>
+          <select id="p-estado">
+            <option value="pendiente">Pendiente</option>
+            <option value="recibida">Recibida</option>
+            <option value="aceptada">Aceptada</option>
+            <option value="descartada">Descartada</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Descripción</label><input type="text" id="p-descripcion" placeholder="Ej: Honorarios anteproyecto y dirección de obra"></div>
+      <div class="form-row"><label class="form-label">Proveedor / quién cotiza</label><input type="text" id="p-proveedor" placeholder="Ej: Arq. García"></div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Monto</label>
+          <input type="number" id="p-monto" placeholder="0">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Moneda</label>
+          <select id="p-moneda">
+            <option value="USD">USD</option>
+            <option value="ARS">ARS</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Fecha</label>
+          <input type="date" id="p-fecha">
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Notas</label><textarea id="p-notas" rows="2" placeholder="Condiciones, detalles, contacto..."></textarea></div>
+      <button class="btn btn-primary" onclick="addPresupuesto()">Guardar cotización</button>
+    </div>
+    <div id="presupuesto-resumen" style="margin-bottom:1rem;"></div>
+    <div id="presupuesto-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- CONTACTOS -->
+  <div id="tab-contactos" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Nuevo contacto</div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Nombre</label>
+          <input type="text" id="c-nombre" placeholder="Ej: Arq. María López">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Rubro</label>
+          <select id="c-rubro">
+            <option value="arquitecto">Arquitecto</option>
+            <option value="inmobiliaria">Inmobiliaria</option>
+            <option value="escribano">Escribano</option>
+            <option value="constructor">Constructor</option>
+            <option value="instalador">Instalador</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Zona</label>
+          <input type="text" id="c-zona" placeholder="Ej: Tandil">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Estado</label>
+          <select id="c-estado">
+            <option value="por_contactar">Por contactar</option>
+            <option value="contactado">Contactado</option>
+            <option value="en_conversacion">En conversación</option>
+            <option value="descartado">Descartado</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Teléfono</label>
+          <input type="text" id="c-telefono" placeholder="+54 9 ...">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Email</label>
+          <input type="text" id="c-email" placeholder="ejemplo@mail.com">
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Notas</label><textarea id="c-notas" rows="2" placeholder="Cómo los conocieron, referencias, impresiones..."></textarea></div>
+      <button class="btn btn-primary" onclick="addContacto()">Guardar contacto</button>
+    </div>
+    <div id="contactos-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- TERRENOS -->
+  <div id="tab-terrenos" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Nuevo terreno</div>
+      <div class="form-row"><label class="form-label">Nombre / dirección</label><input type="text" id="t-nombre" placeholder="Ej: Lote calle Los Robles 450, Tandil"></div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Zona candidata</label>
+          <select id="t-zona"></select>
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Estado</label>
+          <select id="t-estado">
+            <option value="visto_online">Visto online</option>
+            <option value="visitado">Visitado</option>
+            <option value="interesante">Muy interesante</option>
+            <option value="descartado">Descartado</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Precio</label>
+          <input type="number" id="t-precio" placeholder="0">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Moneda</label>
+          <select id="t-moneda">
+            <option value="USD">USD</option>
+            <option value="ARS">ARS</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Superficie (m²)</label><input type="number" id="t-superficie" placeholder="Ej: 1000"></div>
+      <div class="form-row"><label class="form-label">Servicios disponibles</label><input type="text" id="t-servicios" placeholder="Ej: Luz, agua. Sin gas ni cloaca"></div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div><label class="form-label">Pros (uno por línea)</label><textarea id="t-pros" rows="3" placeholder="Vista a las sierras&#10;Esquina&#10;Cerca del centro"></textarea></div>
+        <div><label class="form-label">Contras (uno por línea)</label><textarea id="t-contras" rows="3" placeholder="Sin gas&#10;Calle de tierra"></textarea></div>
+      </div>
+      <div class="form-row"><label class="form-label">Notas</label><textarea id="t-notas" rows="2" placeholder="Inmobiliaria, contacto, condiciones..."></textarea></div>
+      <button class="btn btn-primary" onclick="addTerreno()">Guardar terreno</button>
+    </div>
+    <div id="terrenos-list"><div class="loading">Cargando...</div></div>
+  </div>
+
   <div id="tab-mapa" class="panel" style="height:0;padding:0;margin:0;overflow:hidden;"></div>
 </div>
 
@@ -404,7 +559,7 @@ const CRITERIOS = [
   {id:'taller',label:'Potencial taller'},
 ];
 
-let appData = { journal:[], zonas:[], visitas:[], decisiones:[], checklist:[], checklist_structure:[] };
+let appData = { journal:[], zonas:[], visitas:[], decisiones:[], checklist:[], checklist_structure:[], presupuesto:[], contactos:[], terrenos:[] };
 let etapas = [];
 let checkStates = {};
 let ratings = {};
@@ -502,8 +657,12 @@ function renderAll() {
   renderZonas();
   renderVisits();
   renderChecklist();
+  renderPresupuesto();
+  renderContactos();
+  renderTerrenos();
   updateResumen();
   updateVisitZonaSelects();
+  updateTerrenoZonaSelect();
 }
 
 function showTab(id, btn) {
@@ -1064,6 +1223,253 @@ function updateResumen() {
   } else lastEl.textContent='Todavía no hay entradas.';
 }
 
+// ---- PRESUPUESTO ----
+const RUBROS = { terreno:'Terreno', arquitecto:'Arquitecto', construccion:'Construcción', instalaciones:'Instalaciones', materiales:'Materiales', legales:'Trámites y legales', otros:'Otros' };
+const RUBRO_COLORS = { terreno:'#e1f5ee', arquitecto:'#eeedfe', construccion:'#faeeda', instalaciones:'#e6f1fb', materiales:'#eaf3de', legales:'#faece7', otros:'#f1efe8' };
+const RUBRO_TEXT = { terreno:'#0f6e56', arquitecto:'#3c3489', construccion:'#854f0b', instalaciones:'#185fa5', materiales:'#3b6d11', legales:'#993c1d', otros:'#5f5e5a' };
+const P_ESTADO = { pendiente:{label:'Pendiente',color:'#faeeda',text:'#854f0b'}, recibida:{label:'Recibida',color:'#e6f1fb',text:'#185fa5'}, aceptada:{label:'Aceptada',color:'#e1f5ee',text:'#0f6e56'}, descartada:{label:'Descartada',color:'#fce8e8',text:'#a32d2d'} };
+
+async function addPresupuesto() {
+  const descripcion = document.getElementById('p-descripcion').value.trim();
+  if (!descripcion) return;
+  const item = {
+    id: uid(), rubro: document.getElementById('p-rubro').value,
+    descripcion, proveedor: document.getElementById('p-proveedor').value.trim(),
+    monto: document.getElementById('p-monto').value || '0',
+    moneda: document.getElementById('p-moneda').value,
+    estado: document.getElementById('p-estado').value,
+    fecha: document.getElementById('p-fecha').value,
+    notas: document.getElementById('p-notas').value.trim()
+  };
+  appData.presupuesto.unshift(item);
+  renderPresupuesto();
+  await api(null, { action:'write', section:'presupuesto', data:item });
+  toast('Cotización guardada');
+  ['p-descripcion','p-proveedor','p-monto','p-notas','p-fecha'].forEach(id => document.getElementById(id).value='');
+}
+
+async function deletePresupuesto(id) {
+  appData.presupuesto = appData.presupuesto.filter(p => p.id !== id);
+  renderPresupuesto();
+  await api(null, { action:'delete', section:'presupuesto', id });
+  toast('Eliminado');
+}
+
+function renderPresupuesto() {
+  // Resumen por rubro
+  const resEl = document.getElementById('presupuesto-resumen');
+  const byRubro = {};
+  let totalUSD = 0, totalARS = 0;
+  appData.presupuesto.filter(p => p.estado !== 'descartada').forEach(p => {
+    const monto = parseFloat(p.monto) || 0;
+    if (!byRubro[p.rubro]) byRubro[p.rubro] = { USD:0, ARS:0 };
+    byRubro[p.rubro][p.moneda] += monto;
+    if (p.moneda === 'USD') totalUSD += monto; else totalARS += monto;
+  });
+
+  resEl.innerHTML = `<div class="card" style="margin-bottom:1rem;">
+    <div class="section-title" style="margin-bottom:12px;">Resumen</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:12px;">
+      ${Object.entries(byRubro).map(([rubro, montos]) => `
+        <div style="background:${RUBRO_COLORS[rubro]||'#f5f5f5'};border-radius:8px;padding:8px 12px;">
+          <div style="font-size:11px;color:${RUBRO_TEXT[rubro]||'#555'};margin-bottom:2px;">${RUBROS[rubro]||rubro}</div>
+          ${montos.USD ? `<div style="font-size:13px;font-weight:500;">USD ${montos.USD.toLocaleString('es-AR')}</div>` : ''}
+          ${montos.ARS ? `<div style="font-size:13px;font-weight:500;">ARS ${montos.ARS.toLocaleString('es-AR')}</div>` : ''}
+        </div>`).join('')}
+    </div>
+    <div style="border-top:1px solid #e8e8e8;padding-top:10px;display:flex;gap:16px;flex-wrap:wrap;">
+      ${totalUSD ? `<div><span style="font-size:12px;color:#888;">Total USD</span><div style="font-size:18px;font-weight:500;">USD ${totalUSD.toLocaleString('es-AR')}</div></div>` : ''}
+      ${totalARS ? `<div><span style="font-size:12px;color:#888;">Total ARS</span><div style="font-size:18px;font-weight:500;">ARS ${totalARS.toLocaleString('es-AR')}</div></div>` : ''}
+      ${!totalUSD && !totalARS ? '<div style="font-size:13px;color:#888;">Sin cotizaciones activas</div>' : ''}
+    </div>
+  </div>`;
+
+  // Lista
+  const el = document.getElementById('presupuesto-list');
+  if (!appData.presupuesto.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay cotizaciones.</div>'; return; }
+
+  // Agrupar por rubro
+  const grupos = {};
+  appData.presupuesto.forEach(p => {
+    if (!grupos[p.rubro]) grupos[p.rubro] = [];
+    grupos[p.rubro].push(p);
+  });
+
+  el.innerHTML = Object.entries(grupos).map(([rubro, items]) => `
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:12px;font-weight:500;color:${RUBRO_TEXT[rubro]||'#555'};margin-bottom:8px;padding:4px 10px;background:${RUBRO_COLORS[rubro]||'#f5f5f5'};border-radius:6px;display:inline-block;">${RUBROS[rubro]||rubro}</div>
+      ${items.map(p => {
+        const est = P_ESTADO[p.estado] || P_ESTADO.pendiente;
+        return `<div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+            <div>
+              <div style="font-size:14px;font-weight:500;">${p.descripcion}</div>
+              ${p.proveedor ? `<div style="font-size:12px;color:#888;">${p.proveedor}</div>` : ''}
+            </div>
+            <div style="text-align:right;flex-shrink:0;margin-left:12px;">
+              ${p.monto && p.monto !== '0' ? `<div style="font-size:15px;font-weight:500;">${p.moneda} ${parseFloat(p.monto).toLocaleString('es-AR')}</div>` : ''}
+              ${p.fecha ? `<div style="font-size:11px;color:#aaa;">${p.fecha}</div>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <span style="font-size:11px;padding:2px 8px;border-radius:99px;background:${est.color};color:${est.text}">${est.label}</span>
+            ${p.notas ? `<span style="font-size:11px;color:#888;">${p.notas}</span>` : ''}
+            <button class="del-btn" style="margin-left:auto;" onclick="deletePresupuesto('${p.id}')">eliminar</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+}
+
+// ---- CONTACTOS ----
+const C_RUBROS = { arquitecto:'Arquitecto', inmobiliaria:'Inmobiliaria', escribano:'Escribano', constructor:'Constructor', instalador:'Instalador', otro:'Otro' };
+const C_ESTADO = { por_contactar:{label:'Por contactar',color:'#faeeda',text:'#854f0b'}, contactado:{label:'Contactado',color:'#e6f1fb',text:'#185fa5'}, en_conversacion:{label:'En conversación',color:'#e1f5ee',text:'#0f6e56'}, descartado:{label:'Descartado',color:'#fce8e8',text:'#a32d2d'} };
+
+async function addContacto() {
+  const nombre = document.getElementById('c-nombre').value.trim();
+  if (!nombre) return;
+  const contacto = {
+    id: uid(), nombre, rubro: document.getElementById('c-rubro').value,
+    zona: document.getElementById('c-zona').value.trim(),
+    telefono: document.getElementById('c-telefono').value.trim(),
+    email: document.getElementById('c-email').value.trim(),
+    estado: document.getElementById('c-estado').value,
+    notas: document.getElementById('c-notas').value.trim()
+  };
+  appData.contactos.unshift(contacto);
+  renderContactos();
+  await api(null, { action:'write', section:'contactos', data:contacto });
+  toast('Contacto guardado');
+  ['c-nombre','c-zona','c-telefono','c-email','c-notas'].forEach(id => document.getElementById(id).value='');
+}
+
+async function deleteContacto(id) {
+  appData.contactos = appData.contactos.filter(c => c.id !== id);
+  renderContactos();
+  await api(null, { action:'delete', section:'contactos', id });
+  toast('Eliminado');
+}
+
+async function updateContactoEstado(id, estado) {
+  const c = appData.contactos.find(c => c.id === id);
+  if (!c) return;
+  c.estado = estado;
+  renderContactos();
+  // Actualizar en Sheet reemplazando la fila
+  await api(null, { action:'updateField', section:'contactos', id, field:'estado', value:estado });
+}
+
+function renderContactos() {
+  const el = document.getElementById('contactos-list');
+  if (!appData.contactos.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay contactos.</div>'; return; }
+  const sorted = [...appData.contactos].sort((a,b) => {
+    const order = ['en_conversacion','contactado','por_contactar','descartado'];
+    return order.indexOf(a.estado) - order.indexOf(b.estado);
+  });
+  el.innerHTML = sorted.map(c => {
+    const est = C_ESTADO[c.estado] || C_ESTADO.por_contactar;
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div>
+          <div style="font-size:14px;font-weight:500;">${c.nombre}</div>
+          <div style="font-size:12px;color:#888;">${C_RUBROS[c.rubro]||c.rubro}${c.zona?' · '+c.zona:''}</div>
+        </div>
+        <button class="del-btn" onclick="deleteContacto('${c.id}')">eliminar</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center;">
+        ${c.telefono?`<a href="tel:${c.telefono}" style="font-size:12px;color:#185fa5;text-decoration:none;">📞 ${c.telefono}</a>`:''}
+        ${c.email?`<a href="mailto:${c.email}" style="font-size:12px;color:#185fa5;text-decoration:none;">✉️ ${c.email}</a>`:''}
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <select onchange="updateContactoEstado('${c.id}',this.value)" style="font-size:11px;padding:2px 6px;border-radius:99px;background:${est.color};color:${est.text};border:1px solid ${est.color};width:auto;">
+          ${Object.entries(C_ESTADO).map(([k,v])=>`<option value="${k}" ${c.estado===k?'selected':''}>${v.label}</option>`).join('')}
+        </select>
+        ${c.notas?`<span style="font-size:11px;color:#888;">${c.notas}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- TERRENOS ----
+const T_ESTADO = { visto_online:{label:'Visto online',color:'#faeeda',text:'#854f0b'}, visitado:{label:'Visitado',color:'#e6f1fb',text:'#185fa5'}, interesante:{label:'Muy interesante',color:'#e1f5ee',text:'#0f6e56'}, descartado:{label:'Descartado',color:'#fce8e8',text:'#a32d2d'} };
+
+function updateTerrenoZonaSelect() {
+  const sel = document.getElementById('t-zona');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Sin zona asociada —</option>' +
+    appData.zonas.map(z => `<option value="${z.id}">${z.nombre}${z.provincia?' · '+z.provincia:''}</option>`).join('');
+}
+
+async function addTerreno() {
+  const nombre = document.getElementById('t-nombre').value.trim();
+  if (!nombre) return;
+  const zonaEl = document.getElementById('t-zona');
+  const zonaId = zonaEl.value;
+  const zonaNombre = zonaId ? zonaEl.options[zonaEl.selectedIndex].text.split(' · ')[0] : '';
+  const terreno = {
+    id: uid(), nombre, zona_id: zonaId, zona_nombre: zonaNombre,
+    precio: document.getElementById('t-precio').value || '0',
+    moneda: document.getElementById('t-moneda').value,
+    superficie: document.getElementById('t-superficie').value || '',
+    servicios: document.getElementById('t-servicios').value.trim(),
+    pros: document.getElementById('t-pros').value.trim().split('\n').filter(Boolean).join('|'),
+    contras: document.getElementById('t-contras').value.trim().split('\n').filter(Boolean).join('|'),
+    notas: document.getElementById('t-notas').value.trim(),
+    estado: document.getElementById('t-estado').value,
+    fotos: ''
+  };
+  appData.terrenos.unshift(terreno);
+  renderTerrenos();
+  await api(null, { action:'write', section:'terrenos', data:terreno });
+  toast('Terreno guardado');
+  ['t-nombre','t-precio','t-superficie','t-servicios','t-pros','t-contras','t-notas'].forEach(id => document.getElementById(id).value='');
+}
+
+async function deleteTerreno(id) {
+  appData.terrenos = appData.terrenos.filter(t => t.id !== id);
+  renderTerrenos();
+  await api(null, { action:'delete', section:'terrenos', id });
+  toast('Eliminado');
+}
+
+function renderTerrenos() {
+  const el = document.getElementById('terrenos-list');
+  if (!appData.terrenos.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay terrenos cargados.</div>'; return; }
+  el.innerHTML = appData.terrenos.map(t => {
+    const est = T_ESTADO[t.estado] || T_ESTADO.visto_online;
+    const pros = t.pros ? t.pros.split('|').filter(Boolean) : [];
+    const cons = t.contras ? t.contras.split('|').filter(Boolean) : [];
+    const precioStr = t.precio && t.precio !== '0' ? `${t.moneda} ${parseFloat(t.precio).toLocaleString('es-AR')}` : '';
+    const m2Str = t.superficie ? `${parseFloat(t.superficie).toLocaleString('es-AR')} m²` : '';
+    const precioM2 = t.precio && t.precio !== '0' && t.superficie ?
+      `${t.moneda} ${Math.round(parseFloat(t.precio)/parseFloat(t.superficie)).toLocaleString('es-AR')}/m²` : '';
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:500;margin-bottom:2px;">${t.nombre}</div>
+          ${t.zona_nombre?`<div style="font-size:12px;color:#888;">${t.zona_nombre}</div>`:''}
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px;">
+          ${precioStr?`<div style="font-size:16px;font-weight:500;">${precioStr}</div>`:''}
+          ${m2Str||precioM2?`<div style="font-size:11px;color:#aaa;">${[m2Str,precioM2].filter(Boolean).join(' · ')}</div>`:''}
+        </div>
+      </div>
+      ${t.servicios?`<div style="font-size:12px;color:#666;margin-bottom:8px;">⚡ ${t.servicios}</div>`:''}
+      ${(pros.length||cons.length)?`<div class="pros-cons" style="margin-bottom:8px;">
+        <div>${pros.map(p=>`<div class="pro">${p}</div>`).join('')}</div>
+        <div>${cons.map(c=>`<div class="con">${c}</div>`).join('')}</div>
+      </div>`:''}
+      ${t.notas?`<div style="font-size:12px;color:#888;margin-bottom:8px;">${t.notas}</div>`:''}
+      ${renderPhotoGrid(t.fotos, 'terrenos', t.id)}
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;">
+        <span style="font-size:11px;padding:2px 8px;border-radius:99px;background:${est.color};color:${est.text}">${est.label}</span>
+        ${photoUploadBtn('terrenos', t.id)}
+        <button class="del-btn" style="margin-left:auto;" onclick="deleteTerreno('${t.id}')">eliminar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 // ---- FOTOS ----
 function openLightbox(url) {
   document.getElementById('lightbox-img').src = url;
@@ -1113,6 +1519,10 @@ async function handlePhotoUpload(event, section, id) {
         const e = appData.journal.find(e => e.id === id);
         if (e) e.fotos = e.fotos ? e.fotos + '|' + result.url : result.url;
         renderEntries();
+      } else if (section === 'terrenos') {
+        const t = appData.terrenos.find(t => t.id === id);
+        if (t) t.fotos = t.fotos ? t.fotos + '|' + result.url : result.url;
+        renderTerrenos();
       }
       toast('✓ Foto subida');
     } else {
@@ -1131,6 +1541,10 @@ async function deletePhoto(section, id, photoUrl) {
     const e = appData.journal.find(e => e.id === id);
     if (e) e.fotos = (e.fotos||'').split('|').filter(u => u && u !== photoUrl).join('|');
     renderEntries();
+  } else if (section === 'terrenos') {
+    const t = appData.terrenos.find(t => t.id === id);
+    if (t) t.fotos = (t.fotos||'').split('|').filter(u => u && u !== photoUrl).join('|');
+    renderTerrenos();
   }
   await api(null, { action:'deletePhoto', section, id, photoUrl });
   toast('Foto eliminada');
