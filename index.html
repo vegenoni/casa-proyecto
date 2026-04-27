@@ -226,26 +226,41 @@ button.btn-sm { padding: 4px 10px; font-size: 12px; }
   </div>
 
   <!-- MAPA -->
-  <div id="tab-mapa" class="panel">
-    <div id="map-container" style="position:relative;height:calc(100vh - 140px);border-radius:12px;overflow:hidden;margin-bottom:12px;">
-      <div id="proyecto-map" style="width:100%;height:100%;"></div>
-      <div id="map-panel" style="display:none;position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:#1a1108;color:#f5f0e8;border-radius:10px;padding:10px 18px;font-size:12px;z-index:1000;min-width:260px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
-        <button onclick="document.getElementById('map-panel').style.display='none'" style="position:absolute;top:6px;right:10px;background:none;border:none;color:#c4a870;cursor:pointer;font-size:13px;">✕</button>
-        <div id="map-panel-title" style="font-family:Georgia,serif;font-size:14px;margin-bottom:3px;"></div>
-        <div id="map-panel-time" style="color:#c4a870;font-size:11px;margin-bottom:5px;"></div>
-        <div id="map-panel-ruta"></div>
-        <div style="font-size:9px;color:#666;margin-top:5px;">Distancia estimada desde CABA</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
-      <span style="font-size:11px;color:#888;">Filtrar:</span>
+  <div id="tab-mapa" class="panel" style="margin:0 -1rem;">
+    <!-- Filtros arriba -->
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0.75rem 1rem;background:#f5f3ee;border-bottom:1px solid #e8e4dc;">
+      <span style="font-size:11px;color:#888;margin-right:4px;">Filtrar:</span>
       <button class="btn btn-sm map-filter active" onclick="mapFilter('all',this)">Todos</button>
       <button class="btn btn-sm map-filter" onclick="mapFilter(2,this)">2–3h</button>
       <button class="btn btn-sm map-filter" onclick="mapFilter(3,this)">3–4h</button>
       <button class="btn btn-sm map-filter" onclick="mapFilter(4,this)">4–5h</button>
       <button class="btn btn-sm map-filter" onclick="mapFilter(5,this)">5–6h</button>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+        <span style="font-size:10px;color:#aaa;">● Muy rec.</span>
+        <span style="font-size:10px;color:#aaa;">● Rec.</span>
+        <span style="font-size:10px;color:#aaa;">● Posible</span>
+        <span style="font-size:10px;color:#aaa;">● Menos ideal</span>
+      </div>
     </div>
-    <div style="font-size:11px;color:#888;">Hacé clic en cualquier punto del mapa para ver la distancia desde Buenos Aires.</div>
+    <!-- Mapa + sidebar -->
+    <div style="display:flex;height:calc(100vh - 200px);min-height:500px;">
+      <!-- Mapa -->
+      <div style="flex:1;position:relative;">
+        <div id="proyecto-map" style="width:100%;height:100%;"></div>
+        <div id="map-panel" style="display:none;position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:#1a1108;color:#f5f0e8;border-radius:10px;padding:10px 18px;font-size:12px;z-index:1000;min-width:260px;max-width:380px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+          <button onclick="document.getElementById('map-panel').style.display='none'" style="position:absolute;top:6px;right:10px;background:none;border:none;color:#c4a870;cursor:pointer;font-size:13px;">✕</button>
+          <div id="map-panel-title" style="font-family:Georgia,serif;font-size:14px;margin-bottom:3px;"></div>
+          <div id="map-panel-time" style="color:#c4a870;font-size:11px;margin-bottom:5px;"></div>
+          <div id="map-panel-ruta"></div>
+          <div style="font-size:9px;color:#666;margin-top:5px;">Clic en cualquier punto para ver distancia desde CABA</div>
+        </div>
+      </div>
+      <!-- Sidebar lista -->
+      <div style="width:220px;flex-shrink:0;background:#ede8dc;border-left:1px solid #d8d0c0;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="padding:10px 12px;border-bottom:1px solid #c8a870;font-size:11px;color:#888;" id="map-route-status">Cargando rutas...</div>
+        <div style="overflow-y:auto;flex:1;" id="map-towns-list"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -993,9 +1008,46 @@ function renderMapMarkers(filter){
     });
     const popup=`<span style="font-family:Georgia,serif;font-size:14px;display:block;margin-bottom:3px;">${t.name} <span style="color:#a09070;font-size:10px;">${t.prov}</span></span><span style="color:#c4a870;font-size:10px;">${t.h} · ${t.ruta}</span><div style="color:#d4c8b0;margin-top:4px;font-size:11px;">${t.desc}</div><span style="display:inline-block;margin-top:5px;font-size:9px;padding:2px 7px;border-radius:99px;background:${fc}33;color:${fc}">${MAP_FIT_LABELS[t.fit]||''}</span>`;
     const marker=L.marker([t.lat,t.lng],{icon}).addTo(leafletMap).bindPopup(popup,{maxWidth:220});
-    marker.on('click',()=>showMapPanel(t.lat,t.lng,t.name,t.h,t.ruta,MAP_RING_COLORS[t.ring]));
+    marker.on('click',()=>{
+      showMapPanel(t.lat,t.lng,t.name,t.h,t.ruta,MAP_RING_COLORS[t.ring]);
+      highlightMapSidebarTown(t.name);
+    });
     mapMarkers[t.name]=marker;
   });
+  renderMapSidebar(filter);
+}
+
+function renderMapSidebar(filter) {
+  const el = document.getElementById('map-towns-list');
+  if (!el) return;
+  const filtered = filter === 'all' ? MAP_TOWNS : MAP_TOWNS.filter(t => t.ring === filter);
+  const sorted = [...filtered].sort((a,b) => b.fit - a.fit || a.name.localeCompare(b.name));
+  el.innerHTML = sorted.map(t => {
+    const fc = MAP_FIT_COLORS[t.fit] || '#888';
+    const cardId = 'mapcard-' + t.name.replace(/[^a-zA-Z0-9]/g,'_');
+    return `<div id="${cardId}" onclick="flyToMapTown('${t.name}')" style="padding:8px 12px;border-bottom:1px solid rgba(161,130,80,0.2);cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(176,120,48,0.08)'" onmouseout="this.style.background=''">
+      <div style="font-size:12px;font-weight:600;margin-bottom:1px;">${t.name} <span style="font-size:9px;color:#9a8070;font-weight:400;">${t.prov}</span></div>
+      <div style="font-size:10px;color:#9a8070;margin-bottom:2px;">${t.h} · ${t.ruta}</div>
+      <span style="display:inline-block;font-size:9px;padding:1px 5px;border-radius:99px;background:${fc}22;color:${fc}">${MAP_FIT_LABELS[t.fit]||''}</span>
+    </div>`;
+  }).join('');
+}
+
+function highlightMapSidebarTown(name) {
+  document.querySelectorAll('[id^="mapcard-"]').forEach(c => c.style.background = '');
+  const card = document.getElementById('mapcard-' + name.replace(/[^a-zA-Z0-9]/g,'_'));
+  if (card) { card.style.background = 'rgba(176,120,48,0.18)'; card.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
+}
+
+function flyToMapTown(name){
+  const t=MAP_TOWNS.find(t=>t.name===name);
+  if(!t)return;
+  leafletMap.flyTo([t.lat,t.lng],10,{duration:1});
+  setTimeout(()=>{
+    mapMarkers[name]&&mapMarkers[name].openPopup();
+    showMapPanel(t.lat,t.lng,t.name,t.h,t.ruta,MAP_RING_COLORS[t.ring]);
+  },1000);
+  highlightMapSidebarTown(name);
 }
 
 function mapFilter(filter,btn){
@@ -1027,6 +1079,8 @@ async function loadMapRoutes(){
       L.marker([lat,lng],{icon:L.divIcon({html:`<span style="background:rgba(255,252,245,0.92);padding:2px 6px;border-radius:4px;font-size:9px;color:#7a5c2e;border:1px solid #c4a870;white-space:nowrap;">${text}</span>`,className:'',iconAnchor:[18,8]}),interactive:false}).addTo(leafletMap);
     });
   }catch(e){console.log('Rutas no disponibles',e);}
+  const statusEl = document.getElementById('map-route-status');
+  if (statusEl) statusEl.textContent = mapRouteWays.length > 0 ? `✓ Rutas cargadas · ${MAP_TOWNS.length} destinos` : `${MAP_TOWNS.length} destinos cargados`;
 }
 
 // Inicializar mapa cuando se clickea la pestaña
