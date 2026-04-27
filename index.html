@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Proyecto · Ve + Juanma</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <div class="navbar-tabs">
+      <button class="tab active" onclick="showTab('resumen',this)">Resumen</button>
+      <button class="tab" onclick="showTab('zonas',this)">Zonas</button>
+      <button class="tab" onclick="showTab('terrenos',this)">Terrenos</button>
+      <button class="tab" onclick="showTab('journal',this)">Journal</button>
+      <button class="tab" onclick="showTab('checklist',this)">Checklist</button>
+      <button class="tab" onclick="showTab('visitas',this)">Visitas</button>
+      <button class="tab" onclick="showTab('presupuesto',this)">Presupuesto</button>
+      <button class="tab" onclick="showTab('contactos',this)">Contactos</button>
+      <button class="tab" onclick="showTab('mapa',this)">Mapa</button>
+    </div>
+    <div class="navbar-title">Nuestra casa</div>
+    <button class="hamburger" onclick="toggleMenu()" id="hamburger-btn">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <button class="tab active" onclick="showTab('resumen',this);closeMenu()">Resumen</button>
+    <button class="tab" onclick="showTab('zonas',this);closeMenu()">Zonas</button>
+    <button class="tab" onclick="showTab('terrenos',this);closeMenu()">Terrenos</button>
+    <button class="tab" onclick="showTab('journal',this);closeMenu()">Journal</button>
+    <button class="tab" onclick="showTab('checklist',this);closeMenu()">Checklist</button>
+    <button class="tab" onclick="showTab('visitas',this);closeMenu()">Visitas</button>
+    <button class="tab" onclick="showTab('presupuesto',this);closeMenu()">Presupuesto</button>
+    <button class="tab" onclick="showTab('contactos',this);closeMenu()">Contactos</button>
+    <button class="tab" onclick="showTab('mapa',this);closeMenu()">Mapa</button>
+  </div>
+</nav>
+<div class="app" style="padding-top:1.5rem;">
+
+  <!-- RESUMEN -->
+  <div id="tab-resumen" class="panel active">
+    <div class="grid-2" style="margin-bottom:1.5rem;">
+      <div class="metric"><div class="metric-label">Zonas evaluadas</div><div class="metric-value" id="s-zonas">–</div></div>
+      <div class="metric"><div class="metric-label">Entradas en journal</div><div class="metric-value" id="s-entries">–</div></div>
+      <div class="metric"><div class="metric-label">Tareas completadas</div><div class="metric-value" id="s-tasks">–</div></div>
+      <div class="metric"><div class="metric-label">Decisiones tomadas</div><div class="metric-value" id="s-decisions">–</div></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="section-title">Progreso por etapa</div>
+      <div id="phase-progress"></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="section-title" style="margin-bottom:0.5rem;">Zona con mejor puntaje</div>
+      <div id="top-zona" style="font-size:13px;color:#888;">Cargando...</div>
+    </div>
+    <div class="card">
+      <div class="section-title" style="margin-bottom:0.5rem;">Última entrada del journal</div>
+      <div id="last-entry" style="font-size:13px;color:#888;">Cargando...</div>
+    </div>
+  </div>
+
+  <!-- ZONAS -->
+  <div id="tab-zonas" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Agregar zona candidata</div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;"><label class="form-label">Ciudad / pueblo</label><input type="text" id="z-nombre" placeholder="Ej: Tandil"></div>
+        <div class="form-row" style="margin-bottom:0;"><label class="form-label">Provincia</label><input type="text" id="z-prov" placeholder="Ej: Buenos Aires"></div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div class="form-label" style="margin-bottom:8px;">Evaluación por criterios (1 a 5)</div>
+        <div id="rating-form"></div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div><label class="form-label">Pros (uno por línea)</label><textarea id="z-pros" rows="3" placeholder="Naturaleza&#10;Clima fresco&#10;Ciudad con servicios"></textarea></div>
+        <div><label class="form-label">Contras (uno por línea)</label><textarea id="z-cons" rows="3" placeholder="Lejos de la familia&#10;Mercado laboral chico"></textarea></div>
+      </div>
+      <div class="form-row"><label class="form-label">Notas libres</label><textarea id="z-notas" rows="2" placeholder="Lo que quieran agregar..."></textarea></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="addZona()">Agregar zona</button>
+        <label style="font-size:13px;color:#555;display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="z-elegida" style="width:16px;height:16px;accent-color:#1a1a1a;"> Marcar como elegida
+        </label>
+      </div>
+    </div>
+    <div id="zonas-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- JOURNAL -->
+  <div id="tab-journal" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Etiqueta</label>
+          <select id="j-tag">
+            <option value="general">General</option>
+            <option value="decision">Decisión</option>
+            <option value="zona">Zona / exploración</option>
+            <option value="terreno">Terreno</option>
+            <option value="arquitecto">Arquitecto</option>
+            <option value="obra">Obra</option>
+            <option value="legal">Legal</option>
+            <option value="financiero">Financiero</option>
+            <option value="emocional">Emocional</option>
+            <option value="idea">Idea</option>
+          </select>
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">¿Quién escribe?</label>
+          <select id="j-autor">
+            <option value="Ve">Ve</option>
+            <option value="Juanma">Juanma</option>
+            <option value="los dos">Los dos</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Nota</label><textarea id="j-text" rows="4" placeholder="¿Qué pasó hoy? ¿Qué decidieron? ¿Qué están pensando?"></textarea></div>
+      <button class="btn btn-primary" onclick="addEntry()">Agregar entrada</button>
+    </div>
+    <div id="entries-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div id="tab-checklist" class="panel">
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+      <span style="font-size:11px;color:#888;">Filtrar:</span>
+      <button class="btn btn-sm chk-filter active" onclick="setChkFilter('todas',this)">Todas</button>
+      <button class="btn btn-sm chk-filter" onclick="setChkFilter('pendientes',this)">Pendientes</button>
+      <button class="btn btn-sm chk-filter" onclick="setChkFilter('completadas',this)">Completadas</button>
+      <div style="margin-left:auto;display:flex;gap:6px;">
+        <button class="btn btn-sm" onclick="collapseAll()">Colapsar todo</button>
+        <button class="btn btn-sm" onclick="expandAll()">Expandir todo</button>
+      </div>
+    </div>
+
+    <div id="checklist-container"><div class="loading">Cargando...</div></div>
+
+    <!-- Nueva etapa -->
+    <div class="add-etapa-card" style="margin-top:1rem;">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px;">Nueva etapa</div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="new-etapa-nombre" placeholder="Nombre de la etapa" style="font-size:13px;">
+        <button class="btn btn-primary btn-sm" onclick="addEtapa()" style="white-space:nowrap;">Agregar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISITAS -->
+  <div id="tab-visitas" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Registrar visita</div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Zona candidata</label>
+          <select id="v-zona">
+            <option value="">— Sin zona asociada —</option>
+          </select>
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Categoría</label>
+          <select id="v-categoria">
+            <option value="exploracion">Exploración del pueblo</option>
+            <option value="terreno">Terreno específico</option>
+            <option value="profesional">Reunión con profesional</option>
+            <option value="otra">Otra</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Descripción</label><input type="text" id="v-nombre" placeholder="Ej: Recorrida por el centro de Tandil / Lote calle Los Robles"></div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Fecha</label>
+          <input type="date" id="v-fecha">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Estado</label>
+          <select id="v-estado">
+            <option value="pendiente">Pendiente</option>
+            <option value="potencial">Potencial</option>
+            <option value="interesante">Muy interesante</option>
+            <option value="descartado">Descartado</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Notas</label><textarea id="v-notas" rows="2" placeholder="Precio, m², servicios, suelo, impresiones..."></textarea></div>
+      <button class="btn btn-primary" onclick="addVisit()">Guardar visita</button>
+    </div>
+
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
+      <span style="font-size:12px;color:#888;">Vista:</span>
+      <button class="btn btn-sm" id="vista-lista-btn" onclick="setVistaVisitas('lista')" style="background:#1a1108;color:#fff;border-color:#1a1108;">Lista</button>
+      <button class="btn btn-sm" id="vista-cal-btn" onclick="setVistaVisitas('calendario')">Calendario</button>
+      <span style="font-size:12px;color:#888;margin-left:8px;">Filtrar:</span>
+      <select id="v-filtro-zona" onchange="renderVisits()" style="font-size:12px;padding:4px 8px;width:auto;">
+        <option value="">Todas las zonas</option>
+      </select>
+      <select id="v-filtro-cat" onchange="renderVisits()" style="font-size:12px;padding:4px 8px;width:auto;">
+        <option value="">Todas las categorías</option>
+        <option value="exploracion">Exploración</option>
+        <option value="terreno">Terreno</option>
+        <option value="profesional">Profesional</option>
+        <option value="otra">Otra</option>
+      </select>
+    </div>
+
+    <div id="visits-list"><div class="loading">Cargando...</div></div>
+    <div id="visits-calendar" style="display:none;"></div>
+  </div>
+
+  <!-- PRESUPUESTO -->
+  <div id="tab-presupuesto" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Nueva cotización</div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Rubro</label>
+          <select id="p-rubro">
+            <option value="terreno">Terreno</option>
+            <option value="arquitecto">Arquitecto y honorarios</option>
+            <option value="construccion">Construcción</option>
+            <option value="instalaciones">Instalaciones</option>
+            <option value="materiales">Materiales</option>
+            <option value="legales">Trámites y legales</option>
+            <option value="otros">Otros</option>
+          </select>
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Estado</label>
+          <select id="p-estado">
+            <option value="pendiente">Pendiente</option>
+            <option value="recibida">Recibida</option>
+            <option value="aceptada">Aceptada</option>
+            <option value="descartada">Descartada</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Descripción</label><input type="text" id="p-descripcion" placeholder="Ej: Honorarios anteproyecto y dirección de obra"></div>
+      <div class="form-row"><label class="form-label">Proveedor / quién cotiza</label><input type="text" id="p-proveedor" placeholder="Ej: Arq. García"></div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Monto</label>
+          <input type="number" id="p-monto" placeholder="0">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Moneda</label>
+          <select id="p-moneda">
+            <option value="USD">USD</option>
+            <option value="ARS">ARS</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Fecha</label>
+          <input type="date" id="p-fecha">
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Notas</label><textarea id="p-notas" rows="2" placeholder="Condiciones, detalles, contacto..."></textarea></div>
+      <button class="btn btn-primary" onclick="addPresupuesto()">Guardar cotización</button>
+    </div>
+    <div id="presupuesto-resumen" style="margin-bottom:1rem;"></div>
+    <div id="presupuesto-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- CONTACTOS -->
+  <div id="tab-contactos" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Nuevo contacto</div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Nombre</label>
+          <input type="text" id="c-nombre" placeholder="Ej: Arq. María López">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Rubro</label>
+          <select id="c-rubro">
+            <option value="arquitecto">Arquitecto</option>
+            <option value="inmobiliaria">Inmobiliaria</option>
+            <option value="escribano">Escribano</option>
+            <option value="constructor">Constructor</option>
+            <option value="instalador">Instalador</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Zona</label>
+          <input type="text" id="c-zona" placeholder="Ej: Tandil">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Estado</label>
+          <select id="c-estado">
+            <option value="por_contactar">Por contactar</option>
+            <option value="contactado">Contactado</option>
+            <option value="en_conversacion">En conversación</option>
+            <option value="descartado">Descartado</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Teléfono</label>
+          <input type="text" id="c-telefono" placeholder="+54 9 ...">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Email</label>
+          <input type="text" id="c-email" placeholder="ejemplo@mail.com">
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Notas</label><textarea id="c-notas" rows="2" placeholder="Cómo los conocieron, referencias, impresiones..."></textarea></div>
+      <button class="btn btn-primary" onclick="addContacto()">Guardar contacto</button>
+    </div>
+    <div id="contactos-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <!-- TERRENOS -->
+  <div id="tab-terrenos" class="panel">
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="section-title">Nuevo terreno</div>
+      <div class="form-row"><label class="form-label">Nombre / dirección</label><input type="text" id="t-nombre" placeholder="Ej: Lote calle Los Robles 450, Tandil"></div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Zona candidata</label>
+          <select id="t-zona"></select>
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Estado</label>
+          <select id="t-estado">
+            <option value="visto_online">Visto online</option>
+            <option value="visitado">Visitado</option>
+            <option value="interesante">Muy interesante</option>
+            <option value="descartado">Descartado</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Precio</label>
+          <input type="number" id="t-precio" placeholder="0">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">Moneda</label>
+          <select id="t-moneda">
+            <option value="USD">USD</option>
+            <option value="ARS">ARS</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Superficie (m²)</label><input type="number" id="t-superficie" placeholder="Ej: 1000"></div>
+      <div class="form-row"><label class="form-label">Servicios disponibles</label><input type="text" id="t-servicios" placeholder="Ej: Luz, agua. Sin gas ni cloaca"></div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div><label class="form-label">Pros (uno por línea)</label><textarea id="t-pros" rows="3" placeholder="Vista a las sierras&#10;Esquina&#10;Cerca del centro"></textarea></div>
+        <div><label class="form-label">Contras (uno por línea)</label><textarea id="t-contras" rows="3" placeholder="Sin gas&#10;Calle de tierra"></textarea></div>
+      </div>
+      <div class="form-row"><label class="form-label">Notas</label><textarea id="t-notas" rows="2" placeholder="Inmobiliaria, contacto, condiciones..."></textarea></div>
+      <button class="btn btn-primary" onclick="addTerreno()">Guardar terreno</button>
+    </div>
+    <div id="terrenos-list"><div class="loading">Cargando...</div></div>
+  </div>
+
+  <div id="tab-mapa" class="panel" style="height:0;padding:0;margin:0;overflow:hidden;"></div>
+</div>
+
+<!-- MAPA OVERLAY - fuera del .app, fixed sobre el viewport -->
+<div id="mapa-overlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:50;flex-direction:column;background:#f8f7f4;">
+  <div style="background:#f8f7f4;border-bottom:1px solid #e5e5e5;flex-shrink:0;">
+    <div style="max-width:100%;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+      <div style="display:flex;gap:4px;flex-wrap:wrap;" id="mapa-tabs-ref"></div>
+      <div style="font-size:13px;font-weight:500;color:#1a1a1a;white-space:nowrap;padding:0.75rem 0;">Nuestra casa</div>
+    </div>
+    <div style="padding:0.4rem 1rem;border-top:1px solid #f0f0f0;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <span style="font-size:11px;color:#888;">Filtrar:</span>
+      <button class="btn btn-sm map-filter active" onclick="mapFilter('all',this)">Todos</button>
+      <button class="btn btn-sm map-filter" onclick="mapFilter(2,this)">2–3h</button>
+      <button class="btn btn-sm map-filter" onclick="mapFilter(3,this)">3–4h</button>
+      <button class="btn btn-sm map-filter" onclick="mapFilter(4,this)">4–5h</button>
+      <button class="btn btn-sm map-filter" onclick="mapFilter(5,this)">5–6h</button>
+      <div style="margin-left:auto;display:flex;gap:10px;">
+        <span style="font-size:10px;color:#1d9e75;">● Muy rec.</span>
+        <span style="font-size:10px;color:#5a8e20;">● Rec.</span>
+        <span style="font-size:10px;color:#b07830;">● Posible</span>
+        <span style="font-size:10px;color:#9e4a1d;">● Menos ideal</span>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex:1;min-height:0;">
+    <div style="flex:1;position:relative;min-width:0;">
+      <div id="proyecto-map" style="width:100%;height:100%;"></div>
+      <div id="map-panel" style="display:none;position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:#1a1108;color:#f5f0e8;border-radius:10px;padding:10px 18px;font-size:12px;z-index:1000;min-width:260px;max-width:380px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+        <button onclick="document.getElementById('map-panel').style.display='none'" style="position:absolute;top:6px;right:10px;background:none;border:none;color:#c4a870;cursor:pointer;font-size:13px;">✕</button>
+        <div id="map-panel-title" style="font-family:Georgia,serif;font-size:14px;margin-bottom:3px;"></div>
+        <div id="map-panel-time" style="color:#c4a870;font-size:11px;margin-bottom:5px;"></div>
+        <div id="map-panel-ruta"></div>
+        <div style="font-size:9px;color:#666;margin-top:5px;">Clic en cualquier punto para ver distancia desde CABA</div>
+      </div>
+    </div>
+    <div style="width:210px;flex-shrink:0;background:#ede8dc;border-left:1px solid #d8d0c0;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="padding:8px 12px;border-bottom:1px solid #c8a870;font-size:10px;color:#888;" id="map-route-status">Cargando rutas...</div>
+      <div style="overflow-y:auto;flex:1;" id="map-towns-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="photo-lightbox" id="photo-lightbox" onclick="closeLightbox()">
+  <button class="photo-lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/checklist.js"></script>
+<script src="js/zonas.js"></script>
+<script src="js/journal.js"></script>
+<script src="js/visitas.js"></script>
+<script src="js/resumen.js"></script>
+<script src="js/presupuesto.js"></script>
+<script src="js/contactos.js"></script>
+<script src="js/terrenos.js"></script>
+<script src="js/fotos.js"></script>
+<script src="js/mapa.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
