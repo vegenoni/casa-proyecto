@@ -243,17 +243,6 @@ button.btn-sm { padding: 4px 10px; font-size: 12px; }
 
   <!-- CHECKLIST -->
   <div id="tab-checklist" class="panel">
-    <!-- Progreso global -->
-    <div class="card" style="margin-bottom:1rem;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div style="font-size:13px;font-weight:500;">Progreso general</div>
-        <div style="font-size:13px;color:#888;" id="chk-global-label">0 / 0 tareas</div>
-      </div>
-      <div class="progress-wrap" style="height:8px;">
-        <div class="progress-bar" id="chk-global-bar" style="width:0%;height:8px;border-radius:99px;"></div>
-      </div>
-    </div>
-
     <!-- Controles -->
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
       <span style="font-size:11px;color:#888;">Filtrar:</span>
@@ -759,12 +748,27 @@ async function toggleCheck(etapa_id, item_id) {
   const newVal = !getCheck(etapa_id, item_id);
   checkStates[`${etapa_id}__${item_id}`] = newVal;
   updateResumen();
+  // Solo actualizar el checkbox y la opacidad del item específico
   const chk = document.getElementById(`chk-${etapa_id}-${item_id}`);
-  if (chk) chk.checked = newVal;
+  if (chk) {
+    chk.checked = newVal;
+    const row = chk.closest('.checklist-item');
+    if (row) row.style.opacity = newVal ? '0.6' : '1';
+  }
   updateEtapaCount(etapa_id);
-  updateGlobalProgress();
-  // Actualizar opacidad del item
-  renderChecklist();
+  // Actualizar mini barra de la etapa
+  const etapa = etapas.find(e => e.etapa_id === etapa_id);
+  if (etapa) {
+    const total = etapa.items.length;
+    const done = etapa.items.filter(i => getCheck(etapa_id, i.item_id)).length;
+    const pct = total ? Math.round((done/total)*100) : 0;
+    // Buscar la barra de progreso de esta etapa
+    const etapaCard = document.getElementById(`etapa-title-${etapa_id}`)?.closest('.etapa-card');
+    if (etapaCard) {
+      const bar = etapaCard.querySelector('.progress-bar');
+      if (bar) bar.style.width = pct + '%';
+    }
+  }
   await api(null, { action:'toggleCheck', etapa_id, item_id, completado: newVal ? 'TRUE' : 'FALSE' });
 }
 
@@ -969,9 +973,8 @@ function renderChecklist() {
     </div>`;
   }).join('');
 
-  updateGlobalProgress();
+  updateResumen();
 }
-
 // ---- ZONAS ----
 function buildRatingBtns() {
   const el = document.getElementById('rating-form');
