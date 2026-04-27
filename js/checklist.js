@@ -201,7 +201,7 @@ function renderChecklist() {
 
     return `<div class="etapa-card" style="${allDone?'opacity:0.75':''}">
       <div class="etapa-header" style="cursor:pointer;" onclick="toggleEtapaCollapse('${etapa.etapa_id}')">
-        <div class="etapa-title-wrap" id="etapa-title-${etapa.etapa_id}" onclick="event.stopPropagation()">
+        <div class="etapa-title-wrap" id="etapa-title-${etapa.etapa_id}">
           <span style="font-size:13px;transition:transform 0.2s;display:inline-block;margin-right:4px;">${collapsed?'▶':'▼'}</span>
           <span class="etapa-title" style="${allDone?'text-decoration:line-through;color:#aaa':''}">${etapa.etapa_nombre}</span>
           ${allDone?'<span style="font-size:11px;color:#1d9e75;margin-left:6px;">✓ Completa</span>':''}
