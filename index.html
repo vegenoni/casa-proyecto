@@ -10,8 +10,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .app { max-width: 720px; margin: 0 auto; padding: 2rem 1rem 1rem; overflow-x: hidden; }
 h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
 .subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
-.tabs { display: flex; gap: 4px; border-bottom: 1px solid #e5e5e5; margin-bottom: 1.5rem; flex-wrap: wrap; background: #f8f7f4; position: sticky; top: 0; z-index: 10; padding-top: 0.5rem; }
-.tab { padding: 8px 14px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; color: #888; background: none; border-top: none; border-left: none; border-right: none; white-space: nowrap; font-family: inherit; }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.tab { padding: 0.75rem 14px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; color: #888; background: none; border-top: none; border-left: none; border-right: none; white-space: nowrap; font-family: inherit; }
 .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; font-weight: 500; }
 .tab:hover:not(.active) { color: #1a1a1a; }
 .panel { display: none; }
@@ -97,18 +97,20 @@ button.btn-sm { padding: 4px 10px; font-size: 12px; }
 </style>
 </head>
 <body>
-<div class="app">
-  <h1>Nuestra casa</h1>
-  <p class="subtitle">Ve + Juanma · Proyecto en curso</p>
-
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('resumen',this)">Resumen</button>
-    <button class="tab" onclick="showTab('zonas',this)">Zonas</button>
-    <button class="tab" onclick="showTab('journal',this)">Journal</button>
-    <button class="tab" onclick="showTab('checklist',this)">Checklist</button>
-    <button class="tab" onclick="showTab('visitas',this)">Visitas</button>
-    <button class="tab" onclick="showTab('mapa',this)">Mapa</button>
+<nav style="position:sticky;top:0;z-index:100;background:#f8f7f4;border-bottom:1px solid #e5e5e5;">
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+    <div class="tabs" style="position:static;border:none;margin:0;padding:0;background:transparent;flex:1;">
+      <button class="tab active" onclick="showTab('resumen',this)">Resumen</button>
+      <button class="tab" onclick="showTab('zonas',this)">Zonas</button>
+      <button class="tab" onclick="showTab('journal',this)">Journal</button>
+      <button class="tab" onclick="showTab('checklist',this)">Checklist</button>
+      <button class="tab" onclick="showTab('visitas',this)">Visitas</button>
+      <button class="tab" onclick="showTab('mapa',this)">Mapa</button>
+    </div>
+    <div style="font-size:13px;font-weight:500;color:#1a1a1a;white-space:nowrap;padding:0.75rem 0;">Nuestra casa</div>
   </div>
+</nav>
+<div class="app" style="padding-top:1.5rem;">
 
   <!-- RESUMEN -->
   <div id="tab-resumen" class="panel active">
@@ -276,20 +278,21 @@ button.btn-sm { padding: 4px 10px; font-size: 12px; }
 
 <!-- MAPA OVERLAY - fuera del .app, fixed sobre el viewport -->
 <div id="mapa-overlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:50;flex-direction:column;background:#f8f7f4;">
-  <!-- Header mismo estilo que .app -->
-  <div style="background:#f8f7f4;border-bottom:1px solid #e5e5e5;padding:0.5rem 1rem 0;max-width:100%;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:0.5rem;">
+  <!-- Navbar igual que el principal -->
+  <div style="background:#f8f7f4;border-bottom:1px solid #e5e5e5;flex-shrink:0;">
+    <div style="max-width:100%;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
       <div style="display:flex;gap:4px;flex-wrap:wrap;" id="mapa-tabs-ref"></div>
+      <div style="font-size:13px;font-weight:500;color:#1a1a1a;white-space:nowrap;padding:0.75rem 0;">Nuestra casa</div>
     </div>
     <!-- Filtros -->
-    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0.5rem 0;border-top:1px solid #f0f0f0;">
+    <div style="padding:0.4rem 1rem;border-top:1px solid #f0f0f0;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
       <span style="font-size:11px;color:#888;">Filtrar:</span>
       <button class="btn btn-sm map-filter active" onclick="mapFilter('all',this)">Todos</button>
       <button class="btn btn-sm map-filter" onclick="mapFilter(2,this)">2–3h</button>
       <button class="btn btn-sm map-filter" onclick="mapFilter(3,this)">3–4h</button>
       <button class="btn btn-sm map-filter" onclick="mapFilter(4,this)">4–5h</button>
       <button class="btn btn-sm map-filter" onclick="mapFilter(5,this)">5–6h</button>
-      <div style="margin-left:auto;display:flex;gap:10px;align-items:center;">
+      <div style="margin-left:auto;display:flex;gap:10px;">
         <span style="font-size:10px;color:#1d9e75;">● Muy rec.</span>
         <span style="font-size:10px;color:#5a8e20;">● Rec.</span>
         <span style="font-size:10px;color:#b07830;">● Posible</span>
