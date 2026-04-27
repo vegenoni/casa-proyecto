@@ -243,12 +243,37 @@ button.btn-sm { padding: 4px 10px; font-size: 12px; }
 
   <!-- CHECKLIST -->
   <div id="tab-checklist" class="panel">
+    <!-- Progreso global -->
+    <div class="card" style="margin-bottom:1rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-size:13px;font-weight:500;">Progreso general</div>
+        <div style="font-size:13px;color:#888;" id="chk-global-label">0 / 0 tareas</div>
+      </div>
+      <div class="progress-wrap" style="height:8px;">
+        <div class="progress-bar" id="chk-global-bar" style="width:0%;height:8px;border-radius:99px;"></div>
+      </div>
+    </div>
+
+    <!-- Controles -->
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+      <span style="font-size:11px;color:#888;">Filtrar:</span>
+      <button class="btn btn-sm chk-filter active" onclick="setChkFilter('todas',this)">Todas</button>
+      <button class="btn btn-sm chk-filter" onclick="setChkFilter('pendientes',this)">Pendientes</button>
+      <button class="btn btn-sm chk-filter" onclick="setChkFilter('completadas',this)">Completadas</button>
+      <div style="margin-left:auto;display:flex;gap:6px;">
+        <button class="btn btn-sm" onclick="collapseAll()">Colapsar todo</button>
+        <button class="btn btn-sm" onclick="expandAll()">Expandir todo</button>
+      </div>
+    </div>
+
     <div id="checklist-container"><div class="loading">Cargando...</div></div>
-    <div class="add-etapa-card">
-      <div class="section-title" style="font-size:14px;margin-bottom:8px;">Nueva etapa</div>
+
+    <!-- Nueva etapa -->
+    <div class="add-etapa-card" style="margin-top:1rem;">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px;">Nueva etapa</div>
       <div style="display:flex;gap:8px;">
         <input type="text" id="new-etapa-nombre" placeholder="Nombre de la etapa" style="font-size:13px;">
-        <button class="btn btn-primary btn-sm" onclick="addEtapa()" style="white-space:nowrap;">Agregar etapa</button>
+        <button class="btn btn-primary btn-sm" onclick="addEtapa()" style="white-space:nowrap;">Agregar</button>
       </div>
     </div>
   </div>
@@ -737,6 +762,9 @@ async function toggleCheck(etapa_id, item_id) {
   const chk = document.getElementById(`chk-${etapa_id}-${item_id}`);
   if (chk) chk.checked = newVal;
   updateEtapaCount(etapa_id);
+  updateGlobalProgress();
+  // Actualizar opacidad del item
+  renderChecklist();
   await api(null, { action:'toggleCheck', etapa_id, item_id, completado: newVal ? 'TRUE' : 'FALSE' });
 }
 
@@ -842,17 +870,70 @@ async function saveEditItem(etapa_id, item_id) {
   toast('Ítem actualizado');
 }
 
+let chkFilter = 'todas';
+let collapsedEtapas = {};
+
+function setChkFilter(filter, btn) {
+  chkFilter = filter;
+  document.querySelectorAll('.chk-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChecklist();
+}
+
+function collapseAll() {
+  etapas.forEach(e => collapsedEtapas[e.etapa_id] = true);
+  renderChecklist();
+}
+
+function expandAll() {
+  collapsedEtapas = {};
+  renderChecklist();
+}
+
+function toggleEtapaCollapse(etapa_id) {
+  collapsedEtapas[etapa_id] = !collapsedEtapas[etapa_id];
+  renderChecklist();
+}
+
+function updateGlobalProgress() {
+  const total = etapas.reduce((s, e) => s + e.items.length, 0);
+  const done = etapas.reduce((s, e) => s + e.items.filter(i => getCheck(e.etapa_id, i.item_id)).length, 0);
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  const bar = document.getElementById('chk-global-bar');
+  const label = document.getElementById('chk-global-label');
+  if (bar) bar.style.width = pct + '%';
+  if (label) label.textContent = `${done} / ${total} tareas · ${pct}%`;
+}
+
 function renderChecklist() {
   const el = document.getElementById('checklist-container');
   if (!etapas.length) {
     el.innerHTML = '<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay etapas. Agregá la primera abajo.</div>';
+    updateGlobalProgress();
     return;
   }
+
   el.innerHTML = etapas.map(etapa => {
-    const done = etapa.items.filter(i => getCheck(etapa.etapa_id, i.item_id)).length;
-    const items = etapa.items.map(item => {
+    const totalItems = etapa.items.length;
+    const doneItems = etapa.items.filter(i => getCheck(etapa.etapa_id, i.item_id)).length;
+    const pct = totalItems ? Math.round((doneItems / totalItems) * 100) : 0;
+    const collapsed = collapsedEtapas[etapa.etapa_id];
+    const allDone = doneItems === totalItems && totalItems > 0;
+
+    // Filtrar ítems según filtro activo
+    const filteredItems = etapa.items.filter(item => {
       const checked = getCheck(etapa.etapa_id, item.item_id);
-      return `<div class="checklist-item">
+      if (chkFilter === 'pendientes') return !checked;
+      if (chkFilter === 'completadas') return checked;
+      return true;
+    });
+
+    // Si el filtro deja la etapa vacía, no la mostramos
+    if (chkFilter !== 'todas' && filteredItems.length === 0) return '';
+
+    const itemsHtml = filteredItems.map(item => {
+      const checked = getCheck(etapa.etapa_id, item.item_id);
+      return `<div class="checklist-item" style="${checked?'opacity:0.6':''}">
         <input type="checkbox" id="chk-${etapa.etapa_id}-${item.item_id}" ${checked?'checked':''} onchange="toggleCheck('${etapa.etapa_id}','${item.item_id}')">
         <label id="item-label-${etapa.etapa_id}-${item.item_id}" for="chk-${etapa.etapa_id}-${item.item_id}">${item.item_texto}</label>
         <div class="item-actions" id="item-actions-${etapa.etapa_id}-${item.item_id}">
@@ -862,24 +943,33 @@ function renderChecklist() {
       </div>`;
     }).join('');
 
-    return `<div class="etapa-card">
-      <div class="etapa-header">
-        <div class="etapa-title-wrap" id="etapa-title-${etapa.etapa_id}">
-          <span class="etapa-title">${etapa.etapa_nombre}</span>
-          <button class="edit-btn" onclick="startEditEtapa('${etapa.etapa_id}')">editar</button>
+    return `<div class="etapa-card" style="${allDone?'opacity:0.75':''}">
+      <div class="etapa-header" style="cursor:pointer;" onclick="toggleEtapaCollapse('${etapa.etapa_id}')">
+        <div class="etapa-title-wrap" id="etapa-title-${etapa.etapa_id}" onclick="event.stopPropagation()">
+          <span style="font-size:13px;transition:transform 0.2s;display:inline-block;margin-right:4px;">${collapsed?'▶':'▼'}</span>
+          <span class="etapa-title" style="${allDone?'text-decoration:line-through;color:#aaa':''}">${etapa.etapa_nombre}</span>
+          ${allDone?'<span style="font-size:11px;color:#1d9e75;margin-left:6px;">✓ Completa</span>':''}
+          <button class="edit-btn" onclick="event.stopPropagation();startEditEtapa('${etapa.etapa_id}')">editar</button>
         </div>
-        <div class="etapa-actions">
-          <span class="etapa-count" id="count-${etapa.etapa_id}">${done}/${etapa.items.length}</span>
-          <button class="del-btn" onclick="deleteEtapa('${etapa.etapa_id}')">eliminar etapa</button>
+        <div class="etapa-actions" onclick="event.stopPropagation()">
+          <span class="etapa-count" id="count-${etapa.etapa_id}">${doneItems}/${totalItems}</span>
+          <button class="del-btn" onclick="deleteEtapa('${etapa.etapa_id}')">eliminar</button>
         </div>
       </div>
-      ${items}
-      <div class="add-item-row">
-        <input type="text" id="new-item-${etapa.etapa_id}" placeholder="Nuevo ítem..." onkeydown="if(event.key==='Enter')addItem('${etapa.etapa_id}')">
-        <button class="btn btn-primary btn-sm" onclick="addItem('${etapa.etapa_id}')">Agregar</button>
+      <div style="margin-top:6px;margin-bottom:${collapsed?'0':'8px'};">
+        <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
       </div>
+      ${collapsed ? '' : `
+        ${itemsHtml}
+        <div class="add-item-row">
+          <input type="text" id="new-item-${etapa.etapa_id}" placeholder="Nuevo ítem..." onkeydown="if(event.key==='Enter')addItem('${etapa.etapa_id}')">
+          <button class="btn btn-primary btn-sm" onclick="addItem('${etapa.etapa_id}')">Agregar</button>
+        </div>
+      `}
     </div>`;
   }).join('');
+
+  updateGlobalProgress();
 }
 
 // ---- ZONAS ----
