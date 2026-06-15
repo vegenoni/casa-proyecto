@@ -561,7 +561,7 @@ button.btn-sm { padding: 4px 10px; font-size: 12px; }
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyywJb4PH5vD_hcOgaoAiVneXAM5_wKDztwn3F_IKyJu2VDMMpb5cuO1ARc9GICPiBC/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRb7YVUxjDgnj_rXjh8CpBdhZoMbP8L7yfOIZZLKXnE7YSIqqnW164eID8usq5yt5w/exec';
 const SESSION_KEY = 'casa_session';
 
 // ---- AUTH ----
@@ -691,7 +691,6 @@ const CRITERIOS = [
   {id:'clima',label:'Clima'},{id:'distancia',label:'Distancia a CABA'},
   {id:'servicios',label:'Servicios'},{id:'costo',label:'Costo de vida'},
   {id:'terrenos',label:'Terrenos'},{id:'comunidad',label:'Comunidad'},
-  {id:'taller',label:'Potencial taller'},
 ];
 
 let appData = { journal:[], zonas:[], visitas:[], decisiones:[], checklist:[], checklist_structure:[], presupuesto:[], contactos:[], terrenos:[] };
@@ -1084,7 +1083,7 @@ async function addZona() {
   const zona = {
     id:uid(), nombre, provincia:document.getElementById('z-prov').value.trim(),
     clima:ratings.clima, distancia:ratings.distancia, servicios:ratings.servicios,
-    costo:ratings.costo, terrenos:ratings.terrenos, comunidad:ratings.comunidad, taller:ratings.taller,
+    costo:ratings.costo, terrenos:ratings.terrenos, comunidad:ratings.comunidad,
     pros:document.getElementById('z-pros').value.trim().split('\n').filter(Boolean).join('|'),
     contras:document.getElementById('z-cons').value.trim().split('\n').filter(Boolean).join('|'),
     notas:document.getElementById('z-notas').value.trim(),
@@ -1806,6 +1805,11 @@ const MAP_TOWNS = [
   // ---- BS AS · 2-3h ----
   {name:'Chascomús',lat:-35.573,lng:-58.016,ring:2,h:'~2 h',prov:'Bs As',desc:'Lago, casco histórico, tranquilidad real',ruta:'RN 2',fit:4},
   {name:'Navarro',lat:-35.003,lng:-59.278,ring:2,h:'~2 h',prov:'Bs As',desc:'Lago, campo tranquilo, pueblo chico con historia',ruta:'RP 41',fit:3},
+  {name:'San Andrés de Giles',lat:-34.447,lng:-59.447,ring:2,h:'~2 h',prov:'Bs As',desc:'Pueblo tranquilo, campo, cerca de San Antonio de Areco',ruta:'RN 7',fit:3},
+  {name:'Carmen de Areco',lat:-34.383,lng:-59.817,ring:2,h:'~2 h',prov:'Bs As',desc:'Pueblo chico y tranquilo, zona rural pampeana',ruta:'RN 8',fit:3},
+  {name:'Baradero',lat:-33.808,lng:-59.504,ring:2,h:'~2 h',prov:'Bs As',desc:'Sobre el Paraná, islas, naturaleza, tranquilo',ruta:'RN 9',fit:3},
+  {name:'Junín',lat:-34.588,lng:-60.944,ring:3,h:'~3.5 h',prov:'Bs As',desc:'Ciudad mediana, buena infraestructura, llanura pampeana',ruta:'RN 7',fit:2},
+  {name:'Mar de las Pampas',lat:-37.322,lng:-56.994,ring:4,h:'~5 h',prov:'Bs As',desc:'Costa de pinos, tranquila, diferente al corredor masivo',ruta:'RN 2',fit:4},
   {name:'Lobos',lat:-35.186,lng:-59.093,ring:2,h:'~2 h',prov:'Bs As',desc:'Campo abierto, tranquilo, servicios básicos',ruta:'RN 205',fit:3},
   {name:'Cañuelas',lat:-35.051,lng:-58.757,ring:2,h:'~1.5 h',prov:'Bs As',desc:'Campo tranquilo, muy cerca de CABA',ruta:'RN 3',fit:3},
   {name:'Mercedes',lat:-34.650,lng:-59.430,ring:2,h:'~2 h',prov:'Bs As',desc:'Ciudad chica, buena infraestructura, río Luján',ruta:'RN 5',fit:3},
