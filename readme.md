@@ -14,7 +14,6 @@ App web para Ve y Juanma para gestionar el proceso de construir su casa en Argen
 | Backend / API | Google Apps Script desplegado como Web App |
 | Base de datos | Google Sheets |
 | Almacenamiento de fotos | Google Drive |
-| Hosting | Netlify (repo privado en GitHub: `vegenoni/casa-proyecto`) |
 | Mapa | Leaflet.js + OpenStreetMap + Overpass API |
 
 ---
@@ -30,11 +29,11 @@ App web para Ve y Juanma para gestionar el proceso de construir su casa en Argen
 
 ```js
 // En index.html
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRb7YVUxjDgnj_rXjh8CpBdhZoMbP8L7yfOIZZLKXnE7YSIqqnW164eID8usq5yt5w/exec';
+const SCRIPT_URL = '';
 
 // En apps-script.gs
-const SHEET_ID = '1BwMwFoIkAWQQcZ7JvyJcN7_a6g7VILccoqIjvC7PtP8';
-const PHOTOS_FOLDER_ID = '1e6Wn9dJsonooeswrM4ihoXmW5jV17bpr';
+const SHEET_ID = '';
+const PHOTOS_FOLDER_ID = '';
 ```
 
 ---
@@ -97,7 +96,6 @@ Entradas unificadas (antes separadas en Journal y Decisiones). Campos: etiqueta 
 ### Checklist
 Etapas y tareas completamente editables (agregar, editar, eliminar etapas e ítems). Bloques colapsables individualmente + colapsar/expandir todo. Filtros: Todas / Pendientes / Completadas. Mini barra de progreso por etapa. Las etapas 100% completas se muestran tachadas con ✓ verde.
 
-**Bug conocido:** el colapso individual de etapas no funciona correctamente. Colapsar/expandir todo sí funciona. Pendiente de arreglar en Claude Code.
 
 Etapas por defecto:
 1. Exploración de zonas
@@ -149,27 +147,3 @@ Secciones con fotos: Zonas, Terrenos, Journal.
 - **Mobile (≤768px):** botón hamburguesa ☰ que despliega menú vertical
 
 Tabs: Resumen · Zonas · Terrenos · Journal · Checklist · Visitas · Presupuesto · Contactos · Mapa
-
----
-
-## Perfil de Ve y Juanma
-
-Contexto para entender las decisiones de diseño:
-- Ve: trabaja remoto, quiere montar un taller de arte en la casa, con luz natural
-- Juanma: trabaja presencial, en transición laboral
-- Tienen una perra (Sandy) y quieren sumar más animales y gallinas
-- Familia en CABA, quieren algo lejos pero a distancia manejable
-- Zona preferida: Tandil y alrededores (sierras bonaerenses, clima fresco)
-- Presupuesto: no definido aún en la app
-
----
-
-## Pendientes y mejoras conocidas
-
-- **Bug:** colapso individual de etapas en checklist no funciona
-- Editar entradas del journal (hoy solo se pueden eliminar)
-- Búsqueda global
-- Fotos en visitas
-- Exportar resumen a PDF
-- Optimización mobile del mapa y sidebar
-- Refactorizar en archivos separados (CSS, JS por módulo)
