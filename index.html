@@ -561,7 +561,7 @@ button.btn-sm { padding: 4px 10px; font-size: 12px; }
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRb7YVUxjDgnj_rXjh8CpBdhZoMbP8L7yfOIZZLKXnE7YSIqqnW164eID8usq5yt5w/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyywJb4PH5vD_hcOgaoAiVneXAM5_wKDztwn3F_IKyJu2VDMMpb5cuO1ARc9GICPiBC/exec';
 const SESSION_KEY = 'casa_session';
 
 // ---- AUTH ----
@@ -585,7 +585,7 @@ function logout() {
 }
 
 async function doLogin() {
-  const password = document.getElementById('login-password').value;
+  const password = document.getElementById('login-password').value.trim();
   if (!password) return;
   document.getElementById('login-error').style.display = 'none';
   document.getElementById('login-loading').style.display = 'block';
@@ -597,6 +597,7 @@ async function doLogin() {
       saveSession(data.expiry);
       showApp();
     } else {
+      document.getElementById('login-error').textContent = data.error || 'Contraseña incorrecta';
       document.getElementById('login-error').style.display = 'block';
       document.getElementById('login-password').value = '';
       document.getElementById('login-password').focus();
