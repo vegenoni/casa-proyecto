@@ -1844,13 +1844,14 @@ const MAP_TOWNS = [
   {name:'Miramar',lat:-38.270,lng:-57.836,ring:4,h:'~5 h',prov:'Bs As',desc:'Costa tranquila, fuera del boom turístico',ruta:'RN 2',fit:3},
   {name:'Mar del Plata',lat:-38.005,lng:-57.548,ring:4,h:'~5 h',prov:'Bs As',desc:'Ciudad grande, costa, mucha infraestructura',ruta:'RN 2',fit:2},
   // ---- BS AS · 5-6h ----
-  {name:'Sierra de la Ventana',lat:-38.133,lng:-61.797,ring:5,h:'~5.5 h',prov:'Bs As',desc:'Sierras, naturaleza extraordinaria, comunidad interesante',ruta:'RN 3',fit:5},
-  {name:'Tornquist',lat:-38.100,lng:-62.220,ring:5,h:'~5.5 h',prov:'Bs As',desc:'Pueblo chico junto a las sierras de la Ventana',ruta:'RN 3',fit:4},
+  {name:'Sierra de la Ventana',lat:-38.133,lng:-61.797,ring:5,h:'~5.5 h',prov:'Bs As',desc:'Sierras, naturaleza extraordinaria, comunidad interesante, inviernos crudos',ruta:'RN 3',fit:5},
+  {name:'Tornquist',lat:-38.100,lng:-62.220,ring:5,h:'~5.5 h',prov:'Bs As',desc:'Pueblo chico junto a las sierras, tranquilo, terrenos baratos',ruta:'RN 3',fit:5},
   {name:'Tres Arroyos',lat:-38.376,lng:-60.276,ring:5,h:'~5.5 h',prov:'Bs As',desc:'Campo, pueblo grande, buena calidad de vida',ruta:'RN 228',fit:3},
   {name:'Monte Hermoso',lat:-38.985,lng:-61.298,ring:5,h:'~6 h',prov:'Bs As',desc:'Costa tranquila, sin masificación',ruta:'RP 78',fit:3},
   {name:'Bahía Blanca',lat:-38.716,lng:-62.270,ring:5,h:'~6 h',prov:'Bs As',desc:'Ciudad grande, zona patagónica, todos los servicios',ruta:'RN 3',fit:2},
   {name:'Coronel Dorrego',lat:-38.718,lng:-61.288,ring:5,h:'~6 h',prov:'Bs As',desc:'Campo tranquilo, costa cercana',ruta:'RN 3',fit:2},
   {name:'Pigue',lat:-37.600,lng:-62.375,ring:5,h:'~5.5 h',prov:'Bs As',desc:'Colonia francesa, sierras, muy tranquilo',ruta:'RN 33',fit:3},
+  // ---- ENTRE RÍOS ----
   // ---- ENTRE RÍOS ----
   {name:'Gualeguaychú',lat:-33.012,lng:-58.520,ring:3,h:'~3 h',prov:'Entre Ríos',desc:'Ciudad sobre el Uruguay, naturaleza fluvial, carnaval',ruta:'RN 14',fit:3},
   {name:'Colón',lat:-32.225,lng:-58.143,ring:4,h:'~4 h',prov:'Entre Ríos',desc:'Termas, río Uruguay, pueblo turístico tranquilo',ruta:'RN 14',fit:4},
@@ -1858,10 +1859,28 @@ const MAP_TOWNS = [
   {name:'Federación',lat:-30.980,lng:-57.930,ring:5,h:'~5.5 h',prov:'Entre Ríos',desc:'Termas, lago Salto Grande, muy tranquilo',ruta:'RN 14',fit:4},
   {name:'Victoria',lat:-32.617,lng:-60.158,ring:3,h:'~3.5 h',prov:'Entre Ríos',desc:'Sobre el Paraná, islas, naturaleza húmeda',ruta:'RN 12',fit:3},
   {name:'Gualeguay',lat:-33.148,lng:-59.313,ring:3,h:'~3.5 h',prov:'Entre Ríos',desc:'Ciudad tranquila, campo, río Gualeguay',ruta:'RN 12',fit:3},
-  {name:'Villaguay',lat:-31.866,lng:-59.027,ring:4,h:'~4.5 h',prov:'Entre Ríos',desc:'Cuchillas entrerrianas, campo, tranquilo',ruta:'RN 18',fit:3},
-  {name:'Rosario del Tala',lat:-32.300,lng:-59.140,ring:4,h:'~4 h',prov:'Entre Ríos',desc:'Interior de Entre Ríos, muy tranquilo',ruta:'RN 12',fit:3},
+  {name:'Villaguay',lat:-31.866,lng:-59.027,ring:4,h:'~4.5 h',prov:'Entre Ríos',desc:'Cuchillas entrerrianas, verde, muy tranquilo',ruta:'RN 18',fit:4},
+  {name:'Rosario del Tala',lat:-32.300,lng:-59.140,ring:4,h:'~4 h',prov:'Entre Ríos',desc:'Interior de Entre Ríos, muy tranquilo, terrenos baratos',ruta:'RN 12',fit:4},
   {name:'Nogoyá',lat:-32.390,lng:-59.790,ring:4,h:'~4 h',prov:'Entre Ríos',desc:'Interior entrerriano, campo, tranquilo',ruta:'RN 12',fit:3},
-  {name:'Diamante',lat:-32.066,lng:-60.644,ring:4,h:'~4 h',prov:'Entre Ríos',desc:'Sobre el Paraná, barrancas, naturaleza',ruta:'RN 12',fit:3},
+  {name:'Diamante',lat:-32.066,lng:-60.644,ring:4,h:'~4 h',prov:'Entre Ríos',desc:'Sobre el Paraná, barrancas, naturaleza espectacular',ruta:'RN 12',fit:4},
+  {name:'Ibicuy',lat:-33.750,lng:-59.167,ring:3,h:'~3 h',prov:'Entre Ríos',desc:'Delta entrerriano, islas, naturaleza única, muy tranquilo',ruta:'RN 12',fit:4},
+  {name:'Paranacito',lat:-33.716,lng:-58.666,ring:3,h:'~3 h',prov:'Entre Ríos',desc:'Zona de islas del delta, máxima tranquilidad',ruta:'RN 12',fit:3},
+  // ---- CORREDOR DEL PARANÁ ----
+  {name:'San Pedro',lat:-33.678,lng:-59.666,ring:2,h:'~2 h',prov:'Bs As',desc:'Sobre el Paraná, cítricos, naturaleza fluvial, tranquilo',ruta:'RN 9',fit:4},
+  {name:'Ramallo',lat:-33.483,lng:-60.008,ring:2,h:'~2.5 h',prov:'Bs As',desc:'Sobre el Paraná, muy tranquilo, subvalorado',ruta:'RN 9',fit:3},
+  {name:'Campana',lat:-34.163,lng:-58.958,ring:2,h:'~1.5 h',prov:'Bs As',desc:'Zona industrial pero con áreas rurales y el río cerca',ruta:'RN 9',fit:2},
+  {name:'San Nicolás',lat:-33.333,lng:-60.217,ring:3,h:'~3 h',prov:'Bs As',desc:'Ciudad sobre el Paraná, buena infraestructura',ruta:'RN 9',fit:2},
+  // ---- COSTA ATLÁNTICA TRANQUILA ----
+  {name:'Mar de las Pampas',lat:-37.322,lng:-56.994,ring:4,h:'~5 h',prov:'Bs As',desc:'Costa de pinos, tranquila, comunidad artística, sin masificación',ruta:'RN 2',fit:5},
+  {name:'Mar Azul',lat:-37.358,lng:-57.027,ring:4,h:'~5 h',prov:'Bs As',desc:'Contiguo a Mar de las Pampas, más chico y más tranquilo aún',ruta:'RN 2',fit:4},
+  {name:'Las Toninas',lat:-36.567,lng:-56.700,ring:4,h:'~4.5 h',prov:'Bs As',desc:'Costa tranquila, fuera del corredor masivo',ruta:'RN 11',fit:3},
+  {name:'San Clemente del Tuyú',lat:-36.367,lng:-56.717,ring:4,h:'~4 h',prov:'Bs As',desc:'Costa tranquila en invierno, reserva natural cercana',ruta:'RN 11',fit:3},
+  {name:'Costa del Este',lat:-37.183,lng:-57.000,ring:4,h:'~5 h',prov:'Bs As',desc:'Costa tranquila entre Pinamar y Mar de las Pampas',ruta:'RN 2',fit:3},
+  // ---- PAMPA HÚMEDA CON LAGUNA ----
+  {name:'Monte',lat:-35.433,lng:-58.783,ring:2,h:'~2 h',prov:'Bs As',desc:'Laguna, campo, muy tranquilo y cerca de CABA',ruta:'RN 3',fit:3},
+  {name:'Ranchos',lat:-35.517,lng:-58.317,ring:2,h:'~2 h',prov:'Bs As',desc:'Pueblo chico, campo tranquilo',ruta:'RN 2',fit:2},
+  {name:'General Belgrano',lat:-35.767,lng:-58.500,ring:3,h:'~2.5 h',prov:'Bs As',desc:'Sobre el Salado, lagunas, pesca, tranquilo',ruta:'RP',fit:3},
+  {name:'Castelli',lat:-36.083,lng:-57.800,ring:3,h:'~3 h',prov:'Bs As',desc:'Depresión del Salado, lagunas, naturaleza, muy tranquilo',ruta:'RN 2',fit:3},
   // ---- SANTA FE ----
   {name:'Rosario',lat:-32.946,lng:-60.639,ring:3,h:'~3.5 h',prov:'Santa Fe',desc:'Ciudad grande, río Paraná, gastronomía y cultura',ruta:'RN 9',fit:2},
   {name:'San Lorenzo',lat:-32.745,lng:-60.734,ring:3,h:'~3 h',prov:'Santa Fe',desc:'Sobre el Paraná, acceso fácil',ruta:'RN 9',fit:2},
