@@ -1121,6 +1121,8 @@ function renderZonas() {
   if (!appData.zonas.length) { el.innerHTML='<div style="font-size:13px;color:#888;padding:1rem 0;">Todavía no hay zonas. Agregá la primera candidata arriba.</div>'; return; }
   const sorted = [...appData.zonas].sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0));
   el.innerHTML = sorted.map(z => {
+    if (editingZonaId === z.id) return renderZonaEditForm(z);
+
     const elegida = z.elegida==='TRUE';
     const pros = z.pros ? z.pros.split('|').filter(Boolean) : [];
     const cons = z.contras ? z.contras.split('|').filter(Boolean) : [];
@@ -1160,6 +1162,7 @@ function renderZonas() {
       <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <button class="btn btn-sm" onclick="toggleElegida('${z.id}')">${elegida?'Desmarcar':'Marcar como elegida'}</button>
         <button class="btn btn-sm" onclick="irAVisitaDeZona('${z.id}','${z.nombre}')">+ Visita</button>
+        <button class="btn btn-sm" onclick="startEditZona('${z.id}')">✎ Editar</button>
         ${photoUploadBtn('zonas', z.id)}
         <button class="del-btn" onclick="deleteZona('${z.id}')">eliminar</button>
       </div>
@@ -1167,6 +1170,105 @@ function renderZonas() {
   }).join('');
   updateVisitZonaSelects();
 }
+
+let editingZonaId = null;
+
+function startEditZona(id) {
+  editingZonaId = id;
+  renderZonas();
+}
+
+function cancelEditZona() {
+  editingZonaId = null;
+  renderZonas();
+}
+
+function renderZonaEditForm(z) {
+  const pros = z.pros ? z.pros.split('|').filter(Boolean).join('\n') : '';
+  const cons = z.contras ? z.contras.split('|').filter(Boolean).join('\n') : '';
+  return `<div class="zona-card" style="border:2px solid #1a1a1a;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:12px;">Editando: ${z.nombre}</div>
+    <div class="grid-2" style="margin-bottom:12px;">
+      <div class="form-row" style="margin-bottom:0;">
+        <label class="form-label">Ciudad / pueblo</label>
+        <input type="text" id="edit-z-nombre" value="${z.nombre}">
+      </div>
+      <div class="form-row" style="margin-bottom:0;">
+        <label class="form-label">Provincia</label>
+        <input type="text" id="edit-z-prov" value="${z.provincia||''}">
+      </div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <div class="form-label" style="margin-bottom:8px;">Evaluación por criterios (1 a 5)</div>
+      <div id="edit-rating-form-${z.id}">
+        ${CRITERIOS.map(c => `
+          <div class="rating-row">
+            <span class="rating-label">${c.label}</span>
+            <div class="rating-btns">
+              ${[1,2,3,4,5].map(n=>`<button type="button" class="rating-btn${parseInt(z[c.id])===n?' active':''}" onclick="setEditRating('${z.id}','${c.id}',${n})">${n}</button>`).join('')}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom:12px;">
+      <div><label class="form-label">Pros (uno por línea)</label><textarea id="edit-z-pros" rows="3">${pros}</textarea></div>
+      <div><label class="form-label">Contras (uno por línea)</label><textarea id="edit-z-cons" rows="3">${cons}</textarea></div>
+    </div>
+    <div class="form-row"><label class="form-label">Notas libres</label><textarea id="edit-z-notas" rows="2">${z.notas||''}</textarea></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" onclick="saveEditZona('${z.id}')">Guardar cambios</button>
+      <button class="btn" onclick="cancelEditZona()">Cancelar</button>
+    </div>
+  </div>`;
+}
+
+let editRatings = {};
+
+function setEditRating(zonaId, criterioId, val) {
+  if (!editRatings[zonaId]) editRatings[zonaId] = {};
+  editRatings[zonaId][criterioId] = val;
+  // Actualizar visualmente los botones
+  const container = document.getElementById(`edit-rating-form-${zonaId}`);
+  if (!container) return;
+  const rows = container.querySelectorAll('.rating-row');
+  const idx = CRITERIOS.findIndex(c => c.id === criterioId);
+  if (idx === -1) return;
+  const btns = rows[idx].querySelectorAll('.rating-btn');
+  btns.forEach((b, i) => b.classList.toggle('active', i + 1 === val));
+}
+
+async function saveEditZona(id) {
+  const z = appData.zonas.find(z => z.id === id);
+  if (!z) return;
+  const nombre = document.getElementById('edit-z-nombre').value.trim();
+  if (!nombre) return;
+
+  // Tomar ratings editados, o los existentes si no se tocaron
+  const newRatings = {};
+  CRITERIOS.forEach(c => {
+    newRatings[c.id] = (editRatings[id] && editRatings[id][c.id] !== undefined) ? editRatings[id][c.id] : (parseInt(z[c.id]) || 0);
+  });
+  const score = Math.round(CRITERIOS.reduce((s,c)=>s+newRatings[c.id],0) / CRITERIOS.length * 10) / 10;
+
+  z.nombre = nombre;
+  z.provincia = document.getElementById('edit-z-prov').value.trim();
+  CRITERIOS.forEach(c => z[c.id] = newRatings[c.id]);
+  z.pros = document.getElementById('edit-z-pros').value.trim().split('\n').filter(Boolean).join('|');
+  z.contras = document.getElementById('edit-z-cons').value.trim().split('\n').filter(Boolean).join('|');
+  z.notas = document.getElementById('edit-z-notas').value.trim();
+  z.score = score;
+
+  editingZonaId = null;
+  delete editRatings[id];
+  renderZonas();
+  updateResumen();
+
+  // Guardar: como write hace appendRow, necesitamos delete + write para reemplazar la fila
+  await api(null, { action:'delete', section:'zonas', id });
+  await api(null, { action:'write', section:'zonas', data:z });
+  toast('Zona actualizada');
+}
+
 
 // ---- JOURNAL ----
 async function addEntry() {
